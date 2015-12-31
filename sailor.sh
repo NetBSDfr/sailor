@@ -14,6 +14,11 @@ cf=${2}
 . ${cf}
 . ./platform.sh
 
+if [ -z "${shippath}" -o "${shippath}" = "/" ]; then
+	echo "ABORTING: \"\$shippath\" set to \"$shippath\""
+	exit 1
+fi
+
 reqs=""
 
 link_target()
@@ -145,7 +150,7 @@ case ${1} in
 build|create|make)
 	build
 	;;
-start|stop)
+start|stop|status)
 	chroot ${shippath} /etc/rc.d/${service} ${1}
 	;;
 *)
