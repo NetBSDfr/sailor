@@ -3,25 +3,7 @@
 [ $# -lt 1 ] && echo "usage: $0 <ship.conf>" && exit 1
 
 . ${1}
-
-pkgin=`which pkgin`
-pax="`which pax` -rwpe"
-rsync="`which rsync` -av"
-pkg_info=`which pkg_info`
-awk=`which awk`
-sort=`which sort`
-grep=`which egrep`
-tar=`which tar`
-OS=`uname -s`
-
-case $OS in
-*arwin*)
-	ldd=`which otool`
-	;;
-*BSD)
-	ldd=`which ldd`
-	;;
-esac
+. ./platform.sh
 
 [ ! -d ${shippath} ] && mkdir -p ${shippath}
 
@@ -66,11 +48,6 @@ pkg_requires()
 # install wanted binaries
 prefix=`${pkg_info} -QLOCALBASE pkgin`
 varbase=`${pkg_info} -QVARBASE pkgin`
-# /bin/sh is needed by pkg_install
-def_bins="${prefix}/bin/pkgin ${prefix}/sbin/pkg_info /bin/sh \
-	/libexec/ld.elf_so /usr/libexec/ld.elf_so \
-	/usr/sbin/pwd_mkdb /usr/sbin/useradd /usr/sbin/groupadd \
-	/bin/test /sbin/nologin /bin/echo /bin/ps /bin/sleep"
 for bin in ${def_bins} ${shipbins}
 do
 	bin_requires ${bin}
