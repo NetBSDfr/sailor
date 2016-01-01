@@ -2,7 +2,8 @@
 
 usage()
 {
-	echo "usage: $0 <build|start|stop> <ship.conf> [debug]" && exit 1
+	echo "usage: $0 <build|start|stop|status> <ship.conf> [debug]"
+	exit 1
 }
 
 [ $# -lt 2 ] && usage
@@ -68,6 +69,11 @@ need_tools()
 	do
 		[ -f ${t} -a -x ${t} ] && bin_requires ${t}
 	done
+}
+
+has_services()
+{
+	[ -z "${services}" ] && return 1 || return 0
 }
 
 build()
@@ -142,8 +148,11 @@ build()
 		PKG_RCD_SCRIPTS=yes ${pkgin} -y -c ${shippath} install ${pkg}
 		${pkgin} -y clean
 	done
-	
-	echo "${service}=YES" >> ${shippath}/etc/rc.conf
+
+	has_services && for s in ${services}
+	do
+		echo "${service}=YES" >> ${shippath}/etc/rc.conf
+	done
 }
 
 case ${1} in
@@ -151,7 +160,10 @@ build|create|make)
 	build
 	;;
 start|stop|status)
-	chroot ${shippath} /etc/rc.d/${service} ${1}
+	has_services && for s in ${services}
+	do
+		chroot ${shippath} /etc/rc.d/${s} ${1}
+	done
 	;;
 *)
 	usage
