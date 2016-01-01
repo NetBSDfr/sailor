@@ -17,7 +17,7 @@ case $OS in
 *arwin*)
 	ldd=`which otool`
 	;;
-*BSD)
+NetBSD)
 	ldd=`which ldd`
 	def_bins="/libexec/ld.elf_so /usr/libexec/ld.elf_so"
 	;;
