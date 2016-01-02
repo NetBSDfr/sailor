@@ -2,31 +2,33 @@
 
 usage()
 {
-	echo "usage: $0 <build|start|stop|status> <ship.conf> [debug]"
+	echo "usage: $0 <build|start|stop|status|ls> [ship.conf|ship id]"
 	exit 1
 }
 
-[ $# -lt 2 ] && usage
+[ $# -lt 1 ] && usage
 
-cf=${2}
+cmd=${1}
+param=${2}
 
-[ $# -gt 2 ] && debug="`which echo` "
-
-. ${cf}
 . ./platform.sh
 
-if [ -z "${shippath}" -o "${shippath}" = "/" ]; then
-	echo "ABORTING: \"\$shippath\" set to \"$shippath\""
-	exit 1
+if [ -f "${param}" ]; then
+	param=`${readlink} -f ${param}`
+	. ${param}
 fi
 
 reqs=""
+varbase=`${pkg_info} -QVARBASE pkgin`
+varrun="${varbase}/run/sailor"
+
+[ ! -d "${varrun}" ] && ${mkdir} ${varrun}
 
 link_target()
 {
 	for lnk in ${reqs}
 	do
-		[ -h ${lnk} ] && reqs="${reqs} `readlink -f ${lnk}`"
+		[ -h ${lnk} ] && reqs="${reqs} `${readlink} -f ${lnk}`"
 	done
 }
 
@@ -82,7 +84,6 @@ build()
 
 	# install wanted binaries
 	prefix=`${pkg_info} -QLOCALBASE pkgin`
-	varbase=`${pkg_info} -QVARBASE pkgin`
 
 	for bin in ${def_bins} ${shipbins}
 	do
@@ -145,24 +146,61 @@ build()
 			# install all dependencies requirements
 			pkg_requires ${p}
 		done
-		PKG_RCD_SCRIPTS=yes ${pkgin} -y -c ${shippath} install ${pkg}
-		${pkgin} -y clean
 	done
+	PKG_RCD_SCRIPTS=yes ${pkgin} -y -c ${shippath} install ${packages}
+	${pkgin} -y clean
 
 	has_services && for s in ${services}
 	do
-		echo "${service}=YES" >> ${shippath}/etc/rc.conf
+		echo "${s}=YES" >> ${shippath}/etc/rc.conf
 	done
 }
 
-case ${1} in
+case ${cmd} in
 build|create|make)
+	if [ -z "${shippath}" -o "${shippath}" = "/" ]; then
+		echo "ABORTING: \"\$shippath\" set to \"$shippath\""
+		exit 1
+	fi
+
 	build
 	;;
 start|stop|status)
+	# parameter is a ship id
+	if [ ! -f ${param} ]; then
+		shipid=${varrun}/${param}.ship
+		if [ ! -f ${shipid} ]; then
+			echo "invalid ship id \"${param}\""
+			exit 1
+		fi
+		. ${shipid}
+	fi
+
 	has_services && for s in ${services}
 	do
-		chroot ${shippath} /etc/rc.d/${s} ${1}
+		chroot ${shippath} /etc/rc.d/${s} ${cmd}
+	done
+	case ${cmd} in
+	start)
+		shipid=`${od} -A n -t x -N 8 /dev/urandom|${tr} -d ' '`
+		varfile=${varrun}/${shipid}.ship
+		echo "id=${shipid}" > ${varfile}
+		echo "cf=${param}" >> ${varfile}
+		echo "services=\"${services}\"" >> ${varfile}
+		echo "shippath=${shippath}" >> ${varfile}
+		;;
+	stop)
+		${rm} ${varrun}/${param}.ship
+		;;
+	esac
+	;;
+ls)
+	for f in ${varrun}/*.ship
+	do
+		[ ! -f "${f}" ] && exit 0
+		. ${f}
+		. ${cf}
+		echo "${id} - ${shipname} - ${cf}"
 	done
 	;;
 *)

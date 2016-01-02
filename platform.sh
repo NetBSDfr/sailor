@@ -2,11 +2,20 @@ pkgin=`which pkgin`
 pax="${debug}`which pax` -rwpe"
 rsync="${debug}`which rsync` -av"
 cp=`${debug}which cp`
+chown=`which chown`
+chmod=`which chmod`
 pkg_info=`which pkg_info`
 awk=`which awk`
 sort=`which sort`
 grep=`which egrep`
 tar=`which tar`
+mkdir="`which mkdir` -p"
+touch=`which touch`
+rm="`which rm` -f"
+ls=`which ls`
+od=`which od`
+tr=`which tr`
+readlink=`which readlink`
 OS=`uname -s`
 
 # pkg_install additional tools
@@ -23,7 +32,7 @@ NetBSD)
 	;;
 esac
 
-# binaries needed by pkg_install and not listed in +INSTALL
+# binaries needed by many packages and not listed in +INSTALL
 def_bins="${def_bins} /usr/sbin/pwd_mkdb ${useradd} ${groupadd} \
 	${pkg_info} ${pkgin} /bin/sh /bin/test /sbin/nologin /bin/echo \
 	/bin/ps /bin/sleep `which sysctl`"
