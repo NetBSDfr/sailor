@@ -2,7 +2,12 @@
 
 usage()
 {
-	echo "usage: $0 <build|start|stop|status|ls> [ship.conf|ship id]"
+	echo "usage: $0 build <ship.conf>"
+	echo "       $0 start <ship.conf>"
+	echo "       $0 stop <ship id>"
+	echo "       $0 status <ship id>"
+	echo "       $0 destroy <ship.conf>"
+	echo "       $0 ls"
 	exit 1
 }
 
@@ -45,7 +50,7 @@ bin_requires()
 {
 	# grep link matches both symlinks and ELF executables ;)
 	if [ ! -z "`file ${1}|${grep} 'link'`" ]; then
-		reqs="`${ldd} -f'%p\n' ${1}` ${1}"
+		reqs="`${ldd} ${1}` ${1}"
 	
 		[ ! -z "${reqs}" ] && sync_reqs ${1}
 	fi
@@ -180,18 +185,39 @@ mounts()
 	done
 }
 
+has_shipid()
+{
+	[ -f ${shippath}/shipid ] && return 0 || return 1
+}
+
 case ${cmd} in
 build|create|make)
 	if [ -z "${shippath}" -o "${shippath}" = "/" ]; then
 		echo "ABORTING: \"\$shippath\" set to \"$shippath\""
 		exit 1
 	fi
-	if [ -f ${shippath}/shipid ]; then
+	if has_shipid; then
 		echo "ship already exists with id `${cat} ${shippath}/shipid`"
 		exit 1
 	fi
 
 	build
+	;;
+destroy)
+	if ! has_shipid; then
+		echo "ship does not exist"
+		exit 1
+	fi
+	echo -n "really delete ship ${shippath}? [y/N] "
+	read reply
+	case ${reply} in
+	y|yes)
+		${rm} -rf ${shippath}
+		;;
+	*)
+		exit 0
+		;;
+	esac
 	;;
 start|stop|status)
 	# parameter is a ship id

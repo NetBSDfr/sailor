@@ -26,10 +26,10 @@ groupadd=`which groupadd`
 
 case $OS in
 *arwin*)
-	ldd=`which otool`
+	ldd="`which otool` -L"
 	;;
 NetBSD)
-	ldd=`which ldd`
+	ldd="/usr/bin/ldd -f\'%p\n\'"
 	def_bins="/libexec/ld.elf_so /usr/libexec/ld.elf_so"
 	loopmount="/sbin/mount -t null"
 	;;
