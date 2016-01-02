@@ -156,6 +156,28 @@ build()
 	done
 }
 
+mounts()
+{
+	mcmd=${1}
+	for mtype in ro rw
+	do
+		eval mnt=\$"${mtype}_mounts"
+		if [ ! -z "${mnt}" ]; then
+			for mp in ${mnt}
+			do
+				if [ ! -z "${mp}" ]; then
+					${mkdir} ${shippath}/${mp}
+					[ ${mcmd} = "mount" ] && \
+						${loopmount} -o ${mtype} \
+							${mp} ${shippath}/${mp}
+					[ ${mcmd} = "umount" ] && \
+						${umount} ${shippath}/${mp}
+				fi
+			done
+		fi
+	done
+}
+
 case ${cmd} in
 build|create|make)
 	if [ -z "${shippath}" -o "${shippath}" = "/" ]; then
@@ -182,14 +204,16 @@ start|stop|status)
 	done
 	case ${cmd} in
 	start)
+		mounts mount
+
 		shipid=`${od} -A n -t x -N 8 /dev/urandom|${tr} -d ' '`
 		varfile=${varrun}/${shipid}.ship
 		echo "id=${shipid}" > ${varfile}
 		echo "cf=${param}" >> ${varfile}
-		echo "services=\"${services}\"" >> ${varfile}
-		echo "shippath=${shippath}" >> ${varfile}
+		${cat} ${param} >> ${varfile}
 		;;
 	stop)
+		mounts umount
 		${rm} ${varrun}/${param}.ship
 		;;
 	esac

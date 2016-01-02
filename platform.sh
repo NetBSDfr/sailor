@@ -1,3 +1,4 @@
+cat=`which cat`
 pkgin=`which pkgin`
 pax="${debug}`which pax` -rwpe"
 rsync="${debug}`which rsync` -av"
@@ -16,6 +17,7 @@ ls=`which ls`
 od=`which od`
 tr=`which tr`
 readlink=`which readlink`
+umount=`which umount`
 OS=`uname -s`
 
 # pkg_install additional tools
@@ -29,6 +31,7 @@ case $OS in
 NetBSD)
 	ldd=`which ldd`
 	def_bins="/libexec/ld.elf_so /usr/libexec/ld.elf_so"
+	loopmount="/sbin/mount -t null"
 	;;
 esac
 
