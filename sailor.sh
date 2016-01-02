@@ -114,8 +114,8 @@ build()
 	do
 		pkg_tarup -d ${shippath}/tmp ${p}
 		${tar} zxfp ${shippath}/tmp/${p}*tgz -C ${shippath}/${prefix}
-		# install pkg{_install,in} the right way
 	done
+	# install pkg{_install,in} the right way
 	chroot ${shippath} ${prefix}/sbin/pkg_add /tmp/pkg_install*tgz
 	
 	# minimal etc provisioning

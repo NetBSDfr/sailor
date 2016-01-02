@@ -4,6 +4,8 @@ Wanabe portable container system
 
 **THIS IS A WORK IN PROGRESS, DO NOT USE IT!**
 
+**ONLY WORKS ON NetBSD BY NOW**
+
 `sailor` is based on [chroot][0] and [pkgin][1], it will create a `chrooted`
 environment containing only ne needed pieces in order to run a service.
 
