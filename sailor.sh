@@ -154,6 +154,8 @@ build()
 	do
 		echo "${s}=YES" >> ${shippath}/etc/rc.conf
 	done
+	shipid=`${od} -A n -t x -N 8 /dev/urandom|${tr} -d ' '`
+	echo ${shipid} > ${shippath}/shipid
 }
 
 mounts()
@@ -184,6 +186,10 @@ build|create|make)
 		echo "ABORTING: \"\$shippath\" set to \"$shippath\""
 		exit 1
 	fi
+	if [ -f ${shippath}/shipid ]; then
+		echo "ship already exists with id `${cat} ${shippath}/shipid`"
+		exit 1
+	fi
 
 	build
 	;;
@@ -206,7 +212,7 @@ start|stop|status)
 	start)
 		mounts mount
 
-		shipid=`${od} -A n -t x -N 8 /dev/urandom|${tr} -d ' '`
+		shipid=`${cat} ${shippath}/shipid`
 		varfile=${varrun}/${shipid}.ship
 		echo "id=${shipid}" > ${varfile}
 		echo "cf=${param}" >> ${varfile}

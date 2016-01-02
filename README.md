@@ -9,20 +9,20 @@ Wanabe portable container system
 * Create a ship
 
 ```
-# ./sailor build ./nginx.conf
+# ./sailor.sh build ./nginx.conf
 ```
 
 * Run the ship
 
 ```
-# ./sailor start ./nginx.conf
+# ./sailor.sh start ./nginx.conf
 Starting nginx.
 ```
 
 * List running ships
 
 ```
-# ./sailor ls
+# ./sailor.sh ls
 4ecd1896d35a66c7 - nginx - /home/imil/src/sailor/nginx.conf
 ```
 
