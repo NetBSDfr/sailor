@@ -19,7 +19,7 @@ param=${2}
 . ./platform.sh
 
 if [ -f "${param}" ]; then
-	param=`${readlink} -f ${param}`
+	param="`dirname ${param}`/`basename ${param}`"
 	. ${param}
 fi
 
@@ -141,9 +141,9 @@ build()
 	# custom /etc
 	common="ships/common/${OS}"
 	# populate commons
-	${rsync} ${common}/ ${shippath}/
+	[ -d ${common} ] && ${rsync} ${common}/ ${shippath}/
 	# populate 3rd party
-	${rsync} ships/${shipname}/ ${shippath}/
+	[ -d ships/${shipname} ] && ${rsync} ships/${shipname}/ ${shippath}/
 	# fix etc perms
 	${chown} -R root:wheel ${shippath}/etc
 	${chmod} 600 ${shippath}/etc/master.passwd
@@ -172,28 +172,6 @@ build()
 	done
 	shipid=`${od} -A n -t x -N 8 /dev/urandom|${tr} -d ' '`
 	echo ${shipid} > ${shippath}/shipid
-}
-
-mounts()
-{
-	mcmd=${1}
-	for mtype in ro rw
-	do
-		eval mnt=\$"${mtype}_mounts"
-		if [ ! -z "${mnt}" ]; then
-			for mp in ${mnt}
-			do
-				if [ ! -z "${mp}" ]; then
-					${mkdir} ${shippath}/${mp}
-					[ ${mcmd} = "mount" ] && \
-						${loopmount} -o ${mtype} \
-							${mp} ${shippath}/${mp}
-					[ ${mcmd} = "umount" ] && \
-						${umount} ${shippath}/${mp}
-				fi
-			done
-		fi
-	done
 }
 
 has_shipid()

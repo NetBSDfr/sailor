@@ -16,7 +16,6 @@ rm="`which rm` -f"
 ls=`which ls`
 od=`which od`
 tr=`which tr`
-readlink=`which readlink`
 umount=`which umount`
 OS=`uname -s`
 
@@ -32,6 +31,11 @@ case $OS in
 	mkdevs() {
 		true
 	}
+	mounts() {
+		true
+	}
+
+	readlink=`which readlink`
 	def_bins="/usr/lib/dyld"
 	;;
 NetBSD)
@@ -43,6 +47,28 @@ NetBSD)
 		cd ${shippath}/dev && sh MAKEDEV std
 		cd -
 	}
+	mounts() {
+		mcmd=${1}
+		for mtype in ro rw
+		do
+			eval mnt=\$"${mtype}_mounts"
+			if [ ! -z "${mnt}" ]; then
+				for mp in ${mnt}
+				do
+					if [ ! -z "${mp}" ]; then
+						${mkdir} ${shippath}/${mp}
+						[ ${mcmd} = "mount" ] && \
+							${loopmount} -o ${mtype} \
+								${mp} ${shippath}/${mp}
+						[ ${mcmd} = "umount" ] && \
+							${umount} ${shippath}/${mp}
+					fi
+				done
+			fi
+		done
+	}
+
+	readlink="`which readlink` -f"
 	def_bins="/libexec/ld.elf_so /usr/libexec/ld.elf_so"
 	loopmount="/sbin/mount -t null"
 	;;
