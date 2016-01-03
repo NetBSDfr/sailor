@@ -24,9 +24,9 @@ OS=`uname -s`
 useradd=`which useradd`
 groupadd=`which groupadd`
 
-for bin in ${pkg_info} ${pkg_tarup} ${pkgin} ${rsync}
+for bin in pkg_info pkg_tarup pkgin rsync
 do
-	if [ ! -f ${bin} ]; then
+	if [ ! -f `which ${bin}` ]; then
 		echo "${bin} is require for sailor to work"
 		exit 1
 	fi
