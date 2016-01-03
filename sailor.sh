@@ -50,7 +50,7 @@ bin_requires()
 {
 	# grep link matches both symlinks and ELF executables ;)
 	if [ ! -z "`file ${1}|${grep} 'link'`" ]; then
-		reqs="`${ldd} ${1}` ${1}"
+		reqs="`p_ldd ${1}` ${1}"
 	
 		[ ! -z "${reqs}" ] && sync_reqs ${1}
 	fi
