@@ -132,6 +132,8 @@ build()
 		${tar} zxfp ${shippath}/tmp/${p}*tgz -C ${shippath}/${prefix}
 	done
 	# install pkg{_install,in} the right way
+	bin_requires ${prefix}/sbin/pkg_add
+	bin_requires ${prefix}/bin/pkgin
 	chroot ${shippath} ${prefix}/sbin/pkg_add /tmp/pkg_install*tgz
 	
 	# minimal etc provisioning
