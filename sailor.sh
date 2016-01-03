@@ -34,13 +34,13 @@ link_target()
 {
 	for lnk in ${reqs}
 	do
-		[ -h ${lnk} ] && reqs="${reqs} `${readlink} -f ${lnk}`"
+		[ -h ${lnk} ] && reqs="${reqs} `${readlink} ${lnk}`"
 	done
 }
 
 sync_reqs()
 {
-	echo -n "copying requirements for ${1}.. "
+	printf "copying requirements for ${1}.. "
 	link_target ${reqs}
 
 	${pax} ${reqs} ${shippath}/
@@ -197,7 +197,7 @@ destroy)
 		echo "ship does not exist"
 		exit 1
 	fi
-	echo -n "really delete ship ${shippath}? [y/N] "
+	printf "really delete ship ${shippath}? [y/N] "
 	read reply
 	case ${reply} in
 	y|yes)
