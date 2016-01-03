@@ -98,7 +98,7 @@ has_services()
 
 build()
 {
-	[ ! -d ${shippath} ] && ${mkdir} ${shippath}
+	[ ! -d ${shippath} ] && ${mkdir} ${shippath} || exit 1
 
 	# install wanted binaries
 	prefix=`${pkg_info} -QLOCALBASE pkgin`
@@ -128,7 +128,7 @@ build()
 	pkg_requires pkg_install
 	for p in pkg_install pkgin
 	do
-		pkg_tarup -d ${shippath}/tmp ${p}
+		${pkg_tarup} -d ${shippath}/tmp ${p}
 		${tar} zxfp ${shippath}/tmp/${p}*tgz -C ${shippath}/${prefix}
 	done
 	# install pkg{_install,in} the right way

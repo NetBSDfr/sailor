@@ -6,6 +6,7 @@ cp=`${debug}which cp`
 chown=`which chown`
 chmod=`which chmod`
 pkg_info=`which pkg_info`
+pkg_tarup=`which pkg_tarup`
 awk=`which awk`
 sort=`which sort`
 grep=`which egrep`
@@ -22,6 +23,12 @@ OS=`uname -s`
 # pkg_install additional tools
 useradd=`which useradd`
 groupadd=`which groupadd`
+
+for bin in ${pkg_info} ${pkg_tarup} ${pkgin} ${rsync}
+do
+	echo "${bin} is require for sailor to work"
+	exit 1
+done
 
 case $OS in
 *arwin*)
