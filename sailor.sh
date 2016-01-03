@@ -83,7 +83,7 @@ need_tools()
 {
 	tools="`${pkg_info} -i ${1} | \
 		${awk} -F= '/^[^\=]+="\// {print $2}' | \
-		${grep} -o '/[^\"\ ]+' | ${sort} -u`"
+		${grep} -oE '/[^\"\ ]+' | ${sort} -u`"
 	
 	for t in ${tools}
 	do
