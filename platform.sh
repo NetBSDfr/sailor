@@ -26,8 +26,10 @@ groupadd=`which groupadd`
 
 for bin in ${pkg_info} ${pkg_tarup} ${pkgin} ${rsync}
 do
-	echo "${bin} is require for sailor to work"
-	exit 1
+	if [ ! -f ${bin} ]; then
+		echo "${bin} is require for sailor to work"
+		exit 1
+	fi
 done
 
 case $OS in
