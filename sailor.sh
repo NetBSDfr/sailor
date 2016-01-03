@@ -24,6 +24,7 @@ if [ -f "${param}" ]; then
 fi
 
 reqs=""
+libs=""
 varbase=`${pkg_info} -QVARBASE pkgin`
 varrun="${varbase}/run/sailor"
 
@@ -46,11 +47,23 @@ sync_reqs()
 	echo "done"
 }
 
+all_libs() {
+	for l in `p_ldd ${1}`
+	do
+		if ! echo ${libs} | ${grep} -sq ${l}; then
+			libs="${libs} ${l}"
+			all_libs ${l}
+		fi
+	done
+}
+
 bin_requires()
 {
+	libs=""
 	# grep link matches both symlinks and ELF executables ;)
-	if [ ! -z "`file ${1}|${grep} 'link'`" ]; then
-		reqs="`p_ldd ${1}` ${1}"
+	if  file ${1}|${grep} -sq 'link'; then
+		all_libs ${1}
+		reqs="${libs} ${1}"
 	
 		[ ! -z "${reqs}" ] && sync_reqs ${1}
 	fi
@@ -94,12 +107,10 @@ build()
 	do
 		bin_requires ${bin}
 	done
-	
+
 	# devices
 	mkdir -p ${shippath}/dev
-	${cp} /dev/MAKEDEV ${shippath}/dev
-	cd ${shippath}/dev && sh MAKEDEV std
-	cd -
+	mkdevs
 	
 	# tmp directory
 	mkdir -p ${shippath}/tmp

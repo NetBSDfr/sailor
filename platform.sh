@@ -27,12 +27,21 @@ groupadd=`which groupadd`
 case $OS in
 *arwin*)
 	p_ldd() {
-		/usr/bin/otool -L ${1}|${awk} '/\/lib/ {print $1}'
+		/usr/bin/otool -L ${1}|${awk} '/\/lib.+\(/ {print $1}'
 	}
+	mkdevs() {
+		true
+	}
+	def_bins="/usr/lib/dyld"
 	;;
 NetBSD)
 	p_ldd() {
 		/usr/bin/ldd -f'%p\n' ${1}
+	}
+	mkdevs() {
+		${cp} /dev/MAKEDEV ${shippath}/dev
+		cd ${shippath}/dev && sh MAKEDEV std
+		cd -
 	}
 	def_bins="/libexec/ld.elf_so /usr/libexec/ld.elf_so"
 	loopmount="/sbin/mount -t null"
