@@ -98,7 +98,7 @@ has_services()
 
 build()
 {
-	[ ! -d ${shippath} ] && mkdir -p ${shippath}
+	[ ! -d ${shippath} ] && ${mkdir} ${shippath}
 
 	# install wanted binaries
 	prefix=`${pkg_info} -QLOCALBASE pkgin`
@@ -109,17 +109,17 @@ build()
 	done
 
 	# devices
-	mkdir -p ${shippath}/dev
+	${mkdir} ${shippath}/dev
 	mkdevs
 	
 	# tmp directory
-	mkdir -p ${shippath}/tmp
+	${mkdir} ${shippath}/tmp
 	chmod 1777 ${shippath}/tmp
 	
 	# needed for pkg_install / pkgin to work
 	for d in db/pkg db/pkgin log run tmp
 	do
-		mkdir -p ${shippath}/${varbase}/${d}
+		${mkdir} ${shippath}/${varbase}/${d}
 	done
 	
 	${pax} ${prefix}/etc/pkgin ${shippath}/
@@ -135,7 +135,7 @@ build()
 	chroot ${shippath} ${prefix}/sbin/pkg_add /tmp/pkg_install*tgz
 	
 	# minimal etc provisioning
-	mkdir -p ${shippath}/etc
+	${mkdir} ${shippath}/etc
 	${cp} /usr/share/zoneinfo/GMT ${shippath}/etc/localtime
 	${cp} /etc/resolv.conf ${shippath}/etc/
 	# custom /etc
