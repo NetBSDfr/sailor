@@ -61,7 +61,7 @@ bin_requires()
 {
 	libs=""
 	# grep link matches both symlinks and ELF executables ;)
-	if  file ${1}|${grep} -sq 'link'; then
+	if  file ${1}|${grep} -sqE '(link|Mach)'; then
 		all_libs ${1}
 		reqs="${libs} ${1}"
 	
