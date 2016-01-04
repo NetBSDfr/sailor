@@ -33,7 +33,7 @@ do
 done
 
 case $OS in
-*arwin*)
+Darwin)
 	p_ldd() {
 		/usr/bin/otool -L ${1}|${awk} '/\/lib.+\(/ {print $1}'
 	}
@@ -45,7 +45,7 @@ case $OS in
 	}
 
 	readlink=`which readlink`
-	def_bins="/usr/lib/dyld"
+	def_bins="/usr/lib/dyld /usr/bin/dscl /usr/bin/cut /usr/bin/which"
 	;;
 NetBSD)
 	p_ldd() {
