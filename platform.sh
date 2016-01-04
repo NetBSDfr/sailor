@@ -46,7 +46,9 @@ Darwin)
 
 	readlink=`which readlink`
 	def_bins="/usr/lib/dyld /usr/bin/dscl /usr/bin/cut /usr/bin/which \
-	/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation"
+	/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation \
+	/System/Library/Frameworks/DirectoryService.framework/Versions/A/DirectoryService \
+	/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation"
 	;;
 NetBSD)
 	p_ldd() {
