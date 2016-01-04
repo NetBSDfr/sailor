@@ -123,6 +123,11 @@ has_shipid()
 	[ -f ${shippath}/shipid ] && return 0 || return 1
 }
 
+get_shipid()
+{
+	has_shipid && ${cat} ${shippath}/shipid
+}
+
 case ${cmd} in
 build|create|make)
 	if [ -z "${shippath}" -o "${shippath}" = "/" ]; then
@@ -130,7 +135,7 @@ build|create|make)
 		exit 1
 	fi
 	if has_shipid; then
-		echo "ship already exists with id `${cat} ${shippath}/shipid`"
+		echo "ship already exists with id `get_shipid`"
 		exit 1
 	fi
 
@@ -139,6 +144,11 @@ build|create|make)
 destroy)
 	if ! has_shipid; then
 		echo "ship does not exist"
+		exit 1
+	fi
+	shipid=`get_shipid`
+	if [ -f ${varrun}/${shipid}.ship ]; then
+		echo "ship is running with id ${shipid}, not destroying"
 		exit 1
 	fi
 	printf "really delete ship ${shippath}? [y/N] "
