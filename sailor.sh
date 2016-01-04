@@ -75,7 +75,7 @@ build()
 	bin_requires ${prefix}/sbin/pkg_add
 	bin_requires ${prefix}/bin/pkgin
 	# install pkg{_install,in} the right way
-	chroot ${shippath} ${prefix}/sbin/pkg_add /tmp/pkg_install*tgz
+	chroot ${shippath} ${prefix}/sbin/pkg_add /tmp/pkg_install*
 	
 	# minimal etc provisioning
 	${mkdir} ${shippath}/etc
@@ -89,7 +89,8 @@ build()
 	[ -d ships/${shipname} ] && ${rsync} ships/${shipname}/ ${shippath}/
 	# fix etc perms
 	${chown} -R root:wheel ${shippath}/etc
-	${chmod} 600 ${shippath}/etc/master.passwd
+	master_passwd=${shippath}/etc/master.passwd
+	[ -f ${master_passwd} ] && ${chmod} 600 ${master_passwd}
 	
 	need_tools pkgin
 	
