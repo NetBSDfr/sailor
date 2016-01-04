@@ -74,13 +74,6 @@ build()
 	done
 	bin_requires ${prefix}/sbin/pkg_add
 	bin_requires ${prefix}/bin/pkgin
-	pkginstallconf=${sysconfdir}/pkg_install.conf
-	if [ -f ${pkginstallconf} ]; then
-		${pax} ${pkginstallconf} ${shippath}/
-		. ${pkginstallconf}
-		${pax} ${GPG_KEYRING_VERIFY} ${shippath}/
-		${pax} ${GPG_KEYRING_PKGVULN} ${shippath}/
-	fi
 	# install pkg{_install,in} the right way
 	chroot ${shippath} ${prefix}/sbin/pkg_add /tmp/pkg_install*
 	
