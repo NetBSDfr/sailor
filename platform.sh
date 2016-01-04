@@ -35,7 +35,7 @@ done
 case $OS in
 Darwin)
 	p_ldd() {
-		/usr/bin/otool -L ${1}|${awk} '/\/lib.+\(/ {print $1}'
+		/usr/bin/otool -L ${1}|${awk} '/\/[lL]ib.+\(/ {print $1}'
 	}
 	mkdevs() {
 		true
