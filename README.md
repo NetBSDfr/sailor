@@ -4,7 +4,7 @@ Wanabe portable container system
 
 **THIS IS A WORK IN PROGRESS, DO NOT USE IT!**
 
-**ONLY WORKS ON NetBSD BY NOW**
+**ONLY WORKS ON NetBSD BY NOW** (and limited support for OSX)
 
 `sailor` is based on [chroot][0] and [pkgin][1], it will create a `chrooted`
 environment containing _only_ the needed pieces in order to install and run a
