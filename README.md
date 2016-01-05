@@ -46,7 +46,7 @@ A ship is defined by its configuration file which contains:
 * `shipname`: the convenient name you'd like to give to your ship
 * `packages`: the packages you'd like to install within your ship
 * `shippath`: full path to your ship
-* `shipbins`: binaries from the host system you'd like to copy to teh ship
+* `shipbins`: binaries from the host system you'd like to copy to the ship
 * `ro_mounts`: read-only mount points to the ship
 * `rw_mounts`: read/write mount points to the ship
 
