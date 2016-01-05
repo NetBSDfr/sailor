@@ -68,8 +68,8 @@ A ship is defined by its configuration file which contains:
 * `packages`: the packages you'd like to install within your ship
 * `shippath`: full path to your ship
 * `shipbins`: binaries from the host system you'd like to copy to the ship
-* `ro_mounts`: read-only mount points to the ship
-* `rw_mounts`: read/write mount points to the ship
+* `ro_mounts`: read-only mount points to the ship (NetBSD only for now)
+* `rw_mounts`: read/write mount points to the ship (NetBSD only for now)
 
 [0]: https://en.wikipedia.org/wiki/Chroot
 [1]: http://pkgin.net
