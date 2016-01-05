@@ -1,14 +1,29 @@
 # sailor
 
-Wanabe portable container system
+## Wanabe portable container system
 
-**THIS IS A WORK IN PROGRESS, DO NOT USE IT!**
-
-**ONLY WORKS ON NetBSD BY NOW** (and limited support for OSX)
+**WARNING** this project is still under heavy development, use it at your own
+risk
 
 `sailor` is based on [chroot][0] and [pkgin][1], it will create a `chrooted`
-environment containing _only_ the needed pieces in order to install and run a
-service.
+environment containing _only_ the needed pieces in order to install and  / or
+run a service.
+
+_NetBSD_ and _Darwin / Mac OS X_ are the primary targets of this project.
+
+## requirements
+
+`sailor` needs the following third party tools:
+
+* `pkg_install`
+* `pkgin`
+* `rsync`
+
+_NetBSD_ users should have those by default, except for `rsync` which can be
+installed with `pkgin`.
+
+_Mac OS X_ users are encouraged to use [Save OS X][2] in order to have a working
+environment within seconds.
 
 ## usage
 
@@ -58,3 +73,4 @@ A ship is defined by its configuration file which contains:
 
 [0]: https://en.wikipedia.org/wiki/Chroot
 [1]: http://pkgin.net
+[2]: http://saveosx.org/
