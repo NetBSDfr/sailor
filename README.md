@@ -38,6 +38,12 @@ Starting nginx.
 # ./sailor.sh stop 4ecd1896d35a66c7
 ```
 
+* Destroy a ship
+
+```
+# ./sailor.sh destroy ./nginx.conf
+```
+
 ## configuration file
 
 A ship is defined by its configuration file which contains:

@@ -1,12 +1,8 @@
 cat=`which cat`
-pkgin=`which pkgin`
 pax="${debug}`which pax` -rwpe"
-rsync="${debug}`which rsync` -av"
 cp=`${debug}which cp`
 chown=`which chown`
 chmod=`which chmod`
-pkg_info=`which pkg_info`
-pkg_tarup=`which pkg_tarup`
 awk=`which awk`
 sort=`which sort`
 grep=`which grep`
@@ -24,13 +20,18 @@ OS=`uname -s`
 useradd=`which useradd`
 groupadd=`which groupadd`
 
+# needed 3rd party programs
 for bin in pkg_info pkg_tarup pkgin rsync
 do
-	if [ ! -f `which ${bin}` ]; then
-		echo "${bin} is require for sailor to work"
+	binpath=`which ${bin}`
+	if [ -z "${binpath}" ]; then
+		echo "${bin} is required for sailor to work"
 		exit 1
 	fi
+	eval ${bin}=${binpath}
 done
+
+rsync="${rsync} -av"
 
 case $OS in
 Darwin)
