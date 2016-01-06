@@ -1,3 +1,5 @@
+# functions used to discover and copy libraries required by installed tools
+
 link_target()
 {
 	for lnk in ${reqs}
