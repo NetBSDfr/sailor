@@ -53,16 +53,16 @@ build()
 	${mkdir} ${shippath}/dev
 	mkdevs
 	
-	# tmp directory
-	${mkdir} ${shippath}/tmp
-	chmod 1777 ${shippath}/tmp
-	
 	# needed for pkg_install / pkgin to work
 	for d in db/pkg db/pkgin log run tmp
 	do
 		${mkdir} ${shippath}/${varbase}/${d}
 	done
 	
+	# tmp directory
+	${mkdir} ${shippath}/tmp
+	chmod 1777 ${shippath}/tmp ${shippath}/var/tmp
+
 	${rsync} ${prefix}/etc/pkgin ${shippath}/${sysconfdir}/
 	
 	# raw pkg_install / pkgin installation

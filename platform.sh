@@ -46,6 +46,9 @@ Darwin)
 	}
 
 	readlink=`which readlink`
+	# dyld is OSX's dynamic loader
+	# /System/Library/Frameworks* are needed by dscl which is needed by
+	# useradd / groupadd wrappers
 	def_bins="/usr/lib/dyld /usr/bin/dscl /usr/bin/cut /usr/bin/which \
 	/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation \
 	/System/Library/Frameworks/DirectoryService.framework/Versions/A/DirectoryService \
@@ -88,4 +91,4 @@ esac
 # binaries needed by many packages and not listed in +INSTALL
 def_bins="${def_bins} /usr/sbin/pwd_mkdb ${useradd} ${groupadd} \
 	${pkg_info} ${pkgin} /bin/sh /bin/test /sbin/nologin /bin/echo \
-	/bin/ps /bin/sleep `which sysctl`"
+	/bin/ps /bin/sleep `which sysctl` `which logger`"
