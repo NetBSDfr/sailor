@@ -44,9 +44,15 @@ build()
 	prefix=`${pkg_info} -QLOCALBASE pkgin`
 	sysconfdir=`${pkg_info} -QPKG_SYSCONFDIR pkgin`
 
+	# copy binaries and dependencies from host
 	for bin in ${def_bins} ${shipbins}
 	do
 		bin_requires ${bin}
+	done
+	# copy flat files from host
+	for file in ${def_files}
+	do
+		${pax} ${file} ${shippath}/
 	done
 
 	# devices

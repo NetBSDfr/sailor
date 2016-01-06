@@ -53,6 +53,8 @@ Darwin)
 	/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation \
 	/System/Library/Frameworks/DirectoryService.framework/Versions/A/DirectoryService \
 	/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation"
+	# request-schema.plist needed for dscl
+	def_files="/System/Library/OpenDirectory/request-schema.plist"
 	;;
 NetBSD)
 	p_ldd() {
