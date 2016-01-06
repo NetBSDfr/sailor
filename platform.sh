@@ -65,19 +65,17 @@ NetBSD)
 		for mtype in ro rw
 		do
 			eval mnt=\$"${mtype}_mounts"
-			if [ ! -z "${mnt}" ]; then
-				for mp in ${mnt}
-				do
-					if [ ! -z "${mp}" ]; then
-						${mkdir} ${shippath}/${mp}
-						[ ${mcmd} = "mount" ] && \
-							${loopmount} -o ${mtype} \
-								${mp} ${shippath}/${mp}
-						[ ${mcmd} = "umount" ] && \
-							${umount} ${shippath}/${mp}
-					fi
-				done
-			fi
+			[ -z "${mnt}" ] && continue
+			for mp in ${mnt}
+			do
+				[ ! -d "${mp}" ] && continue
+				${mkdir} ${shippath}/${mp}
+				[ ${mcmd} = "mount" ] && \
+					${loopmount} -o ${mtype} \
+					${mp} ${shippath}/${mp}
+				[ ${mcmd} = "umount" ] && \
+					${umount} ${shippath}/${mp}
+			done
 		done
 	}
 
