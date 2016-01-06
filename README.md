@@ -68,8 +68,15 @@ A ship is defined by its configuration file which contains:
 * `packages`: the packages you'd like to install within your ship
 * `shippath`: full path to your ship
 * `shipbins`: binaries from the host system you'd like to copy to the ship
+
+_optional_
+
 * `ro_mounts`: read-only mount points to the ship (NetBSD only for now)
 * `rw_mounts`: read/write mount points to the ship (NetBSD only for now)
+* `run_at_build`: run command at build time, can be repeated
+* `run_at_start`: run command at start time, can be repeated
+* `run_at_stop`: run command at stop time, can be repeated
+* `run_at_destroy`: run command at destroy time, can be repeated
 
 [0]: https://en.wikipedia.org/wiki/Chroot
 [1]: http://pkgin.net

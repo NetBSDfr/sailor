@@ -134,6 +134,16 @@ get_shipid()
 	has_shipid && ${cat} ${shippath}/shipid
 }
 
+cmd_run()
+{
+	cmd=${1}; file=${2}
+	${grep} "^run_at_${cmd}" ${file}|while read line
+	do
+		eval ${line}
+		eval chroot ${shippath} \$run_at_${cmd}
+	done
+}
+
 case ${cmd} in
 build|create|make)
 	if [ -z "${shippath}" -o "${shippath}" = "/" ]; then
@@ -146,6 +156,7 @@ build|create|make)
 	fi
 
 	build
+	cmd_run build ${param}
 	;;
 destroy)
 	if ! has_shipid; then
@@ -161,6 +172,7 @@ destroy)
 	read reply
 	case ${reply} in
 	y|yes)
+		cmd_run destroy ${param}
 		${rm} -rf ${shippath}
 		;;
 	*)
@@ -192,10 +204,13 @@ start|stop|status)
 		echo "id=${shipid}" > ${varfile}
 		echo "cf=${param}" >> ${varfile}
 		${cat} ${param} >> ${varfile}
+		cmd_run start ${param}
 		;;
 	stop)
 		mounts umount
-		${rm} ${varrun}/${param}.ship
+		varfile=${varrun}/${param}.ship
+		cmd_run stop ${varfile}
+		${rm} ${varfile}
 		;;
 	esac
 	;;
