@@ -3,6 +3,7 @@
 usage()
 {
 	echo "usage: $0 build <ship.conf>"
+	echo "       $0 export <ship id>"
 	echo "       $0 start <ship.conf>"
 	echo "       $0 stop <ship id>"
 	echo "       $0 status <ship id>"
@@ -151,6 +152,12 @@ cmd_run()
 	done
 }
 
+export_to_tar()
+{
+	# TODO: find location to store export.
+	${tar} czf /tmp/${shipname}-{$DDATE}.tar.gz ${1}
+}
+
 case ${cmd} in
 build|create|make)
 	if [ -z "${shippath}" -o "${shippath}" = "/" ]; then
@@ -188,6 +195,13 @@ destroy)
 		exit 0
 		;;
 	esac
+	;;
+export)
+	if ! has_shipid; then
+		echo "Ship does not exist"
+		exit 1
+	fi
+	export_to_tar ${shippath}
 	;;
 start|stop|status)
 	# parameter is a ship id
