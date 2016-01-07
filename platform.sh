@@ -1,4 +1,5 @@
 cat=`which cat`
+id=`which id`
 pax="${debug}`which pax` -rwpe"
 cp=`${debug}which cp`
 chown=`which chown`
@@ -49,10 +50,11 @@ Darwin)
 	# dyld is OSX's dynamic loader
 	# /System/Library/Frameworks* are needed by dscl which is needed by
 	# useradd / groupadd wrappers
+	SLF="/System/Library/Frameworks"
 	def_bins="/usr/lib/dyld /usr/bin/dscl /usr/bin/cut /usr/bin/which \
-	/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation \
-	/System/Library/Frameworks/DirectoryService.framework/Versions/A/DirectoryService \
-	/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation"
+	${SLF}/Foundation.framework/Versions/C/Foundation \
+	${SLF}/DirectoryService.framework/Versions/A/DirectoryService \
+	${SLF}/CoreFoundation.framework/Versions/A/CoreFoundation"
 	# request-schema.plist needed for dscl
 	def_files="/System/Library/OpenDirectory/request-schema.plist"
 	;;

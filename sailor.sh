@@ -19,6 +19,11 @@ param=${2}
 . ./platform.sh
 . ./deps.sh
 
+if [ "`${id} -u`" != "0" ]; then
+	echo "please run $0 with UID 0"
+	exit 1
+fi
+
 if [ -f "${param}" ]; then
 	param="`dirname ${param}`/`basename ${param}`"
 	. ${param}
@@ -156,6 +161,7 @@ build|create|make)
 	fi
 
 	build
+	# run user commands after the jail is built
 	cmd_run build ${param}
 	;;
 destroy)
@@ -172,6 +178,7 @@ destroy)
 	read reply
 	case ${reply} in
 	y|yes)
+		# run user commands before removing data
 		cmd_run destroy ${param}
 		${rm} -rf ${shippath}
 		;;
@@ -204,11 +211,13 @@ start|stop|status)
 		echo "id=${shipid}" > ${varfile}
 		echo "cf=${param}" >> ${varfile}
 		${cat} ${param} >> ${varfile}
+		# start user commands after the service is started
 		cmd_run start ${param}
 		;;
 	stop)
 		mounts umount
 		varfile=${varrun}/${param}.ship
+		# start user commands after the service is stopped
 		cmd_run stop ${varfile}
 		${rm} ${varfile}
 		;;
