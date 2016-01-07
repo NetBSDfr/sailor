@@ -5,11 +5,14 @@
 sanity_check()
 {
     if echo "$OS" | grep -q "[Dd]arwin" ; then
+        # Try to find a real way to define if another packages manager is installed.
+        # According to their own documentation.
         if [ -f /usr/local/bin/brew ]; then
             printf "Homebrew detected, pkgsrc can conflict with\n"
             exit 1
         fi
-        if [ -f /usr/local/bin/port ]; then
+        # According to their own documentation.
+        if [ -f /opt/local/bin/port ]; then
             printf "MacPorts detected, pkgsrc can conflict with\n"
             exit 1
         fi
