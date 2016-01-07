@@ -245,7 +245,8 @@ ls)
 		[ ! -f "${f}" ] && exit 0
 		. ${f}
 		. ${cf}
-		echo "${id} - ${shipname} - ${cf}"
+		printf "%s\t%19s\t%s\n" "Ship ID" "Ship name" "Config. file"
+		printf "%20s\t%50s\t%50s\n" "${id}" "${shipname}" "${cf}"
 	done
 	;;
 *)
