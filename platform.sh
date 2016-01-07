@@ -1,21 +1,6 @@
-cat=`which cat`
-id=`which id`
-pax="${debug}`which pax` -rwpe"
-cp=`${debug}which cp`
-chown=`which chown`
-chmod=`which chmod`
-awk=`which awk`
-sort=`which sort`
-grep=`which grep`
-tar=`which tar`
-mkdir="`which mkdir` -p"
-touch=`which touch`
-rm="`which rm` -f"
-ls=`which ls`
-od=`which od`
-tr=`which tr`
-umount=`which umount`
-OS=`uname -s`
+#! /usr/bin/env sh
+
+. ./define.sh
 
 # pkg_install additional tools
 useradd=`which useradd`
@@ -38,8 +23,6 @@ do
 	fi
 	eval ${bin}=${binpath}
 done
-
-rsync="${rsync} -av"
 
 case $OS in
 Darwin)
