@@ -9,7 +9,8 @@ risk
 environment containing _only_ the needed pieces in order to install and  / or
 run a service.
 
-_NetBSD_ and _Darwin / Mac OS X_ are the primary targets of this project.
+**For now** _NetBSD_ and _Darwin / Mac OS X_ are the primary targets of this
+project.
 
 ## requirements
 
