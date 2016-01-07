@@ -21,6 +21,12 @@ sanity_check()
 
 install_pkgin()
 {
+    # IDEA
+    # curl https://pkgsrc.joyent.com/install-on-osx/ ; https://pkgsrc.joyent.com/install-on-linux/
+    # grep "[0-9a-f]\{32\}"
+    # <span class="go">5820c3674be8b1314f3a61c8d82646da34d684ac  bootstrap-2015Q3-i386.tar.gz</span>
+    # <span class="go">c150c0db1daddb4ec49592a7563c2838760bfb8b  bootstrap-2015Q3-x86_64.tar.gz</span>
+
 
     PKGSRC_SITE="http://pkgsrc.joyent.com/packages/$OS"
     PKGSRC_QUARTER="$(date +"%Y %m" |\
