@@ -118,8 +118,10 @@ build()
 			pkg_requires ${p}
 		done
 	done
-	PKG_RCD_SCRIPTS=yes ${pkgin} -y -c ${shippath} install ${packages}
-	${pkgin} -y clean
+	if [ ! -z "${packages}" ]; then
+		PKG_RCD_SCRIPTS=yes ${pkgin} -y -c ${shippath} in ${packages}
+		${pkgin} -y clean
+	fi
 
 	has_services && for s in ${services}
 	do
@@ -145,7 +147,7 @@ cmd_run()
 	${grep} "^run_at_${cmd}" ${file}|while read line
 	do
 		eval ${line}
-		eval chroot ${shippath} \$run_at_${cmd}
+		eval chroot ${shippath} ${sh} -c \"\$run_at_${cmd}\"
 	done
 }
 

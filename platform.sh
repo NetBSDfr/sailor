@@ -1,4 +1,5 @@
 cat=`which cat`
+sh=`which sh`
 id=`which id`
 pax="${debug}`which pax` -rwpe"
 cp=`${debug}which cp`
@@ -33,6 +34,9 @@ do
 done
 
 rsync="${rsync} -av"
+
+# most installation scripts need /bin/sh
+def_bins="/bin/sh"
 
 case $OS in
 Darwin)
