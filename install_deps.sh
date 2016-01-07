@@ -127,5 +127,3 @@ install_3rd_party_pkg()
         fi
     fi
 }
-
-install_3rd_party_pkg "$1"

@@ -155,7 +155,8 @@ cmd_run()
 export_to_tar()
 {
 	# TODO: find location to store export.
-	${tar} czf /tmp/${shipname}-{$DDATE}.tar.gz ${1}
+	# TODO: try to Use pax ?
+	${tar} czfp /tmp/${shipname}-{$DDATE}.tar.gz ${1}
 }
 
 case ${cmd} in
