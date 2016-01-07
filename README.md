@@ -1,6 +1,6 @@
 # sailor
 
-## Wanabe portable container system
+## Wannabe portable container system
 
 **WARNING** this project is still under heavy development, use it at your own
 risk
