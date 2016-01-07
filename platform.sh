@@ -35,9 +35,6 @@ done
 
 rsync="${rsync} -av"
 
-# most installation scripts need /bin/sh
-def_bins="/bin/sh"
-
 case $OS in
 Darwin)
 	p_ldd() {
@@ -97,6 +94,7 @@ NetBSD)
 esac
 
 # binaries needed by many packages and not listed in +INSTALL
+# most installation and startup scripts also need /bin/sh
 def_bins="${def_bins} /usr/sbin/pwd_mkdb ${useradd} ${groupadd} \
 	${pkg_info} ${pkgin} /bin/sh /bin/test /sbin/nologin /bin/echo \
-	/bin/ps /bin/sleep `which sysctl` `which logger`"
+	/bin/ps /bin/sleep `which sysctl` `which logger` /bin/sh"
