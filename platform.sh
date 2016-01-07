@@ -27,7 +27,14 @@ do
 	binpath=`which ${bin}`
 	if [ -z "${binpath}" ]; then
 		echo "${bin} is required for sailor to work"
-		exit 1
+		echo "Would you like to install ${bin}? [y/N]"
+		read confirm
+		if [ "$confirm" = "y" ]; then
+			./install_deps.sh "{bin}"
+		else
+		  echo "${bin} is required for sailor to work"
+			exit 1
+		fi
 	fi
 	eval ${bin}=${binpath}
 done

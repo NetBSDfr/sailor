@@ -70,23 +70,27 @@ install_pkgin()
     fi
 
     # Generic variables and commands.
-    BOOTSTRAP_URL="/tmp/${BOOTSTRAP_TAR}"
+    BOOTSTRAP_TMP="/tmp/${BOOTSTRAP_TAR}"
     # Joyent PGPkey
     REPO_GPGKEY="0xDE817B8E"
 
     # Download bootstrap kit.
     if [ ! -f "$BOOTSTRAP_PATH" ]; then
-        ${curl} -o "$BOOTSTRAP_PATH ${BOOTSTRAP_URL}/${BOOTSTRAP_TAR}"
+        ${curl} -o "$BOOTSTRAP_PATH${BOOTSTRAP_TAR}" "${BOOTSTRAP_TMP}"
+        if [ "$?" != 0 ]; then
+            printf "Version of bootstrap for $OS not found.\nPlease install it by yourself.\n"
+            exit 1
+        fi
     fi
     
     # Verify SHA1 checksum of the bootstrap kit.
-    printf "%s %s" "$BOOTSTRAP_SHA $BOOTSTRAP_PATH" | ${shasum} -a 256 -c - || exit 1
+    echo "$BOOTSTRAP_SHA $BOOTSTRAP_PATH" | ${shasum} -a 256 -c - || exit 1
 
     # Install bootstrap kit to the right path regarding your distribution.
     ${tar} xfP "$BOOTSTRAP_PATH" -C / >/dev/null 2>&1
 
     # Install gpg if not available.
-    if ! ${gpg} >/dev/null 2>&1 ; then
+    if [ -z ${gpg} ]; then
         "$PKGIN_BIN" -y in gnupg
     fi
 
@@ -102,22 +106,26 @@ install_pkgin()
 
 test_if_pkgin_is_installed()
 {
-    if ! ${pkgin} >/dev/null 2>&1 ; then
+
+    if [ -z ${pkgin} ]; then
         install_pkgin
     fi
 }
 
-install_pax()
+install_3rd_party_pkg()
 {
+    pkg=${1}
     test_if_pkgin_is_installed
 
-    if ! ${pax} >/dev/null 2>&1 ; then
-        ${pkgin} -y in pax
+    if [ -z ${pkg} ] ; then
+        ${pkgin} search ${pkg}
+        if [ "$?" != 0 ]; then
+            printf "Package not found.\n"
+            exit 1
+        else
+            ${pkgin} -y in ${pkg}
+        fi
     fi
 }
 
-install_pkgtarup()
-{
-    test_if_pkgin_is_installed
-    ${pkgin} -y in pkg_tarup
-}
+install_3rd_party_pkg "$1"
