@@ -22,17 +22,26 @@ sanity_check()
 install_pkgin()
 {
     # IDEA
-    # curl https://pkgsrc.joyent.com/install-on-osx/ ; https://pkgsrc.joyent.com/install-on-linux/
-    # grep "[0-9a-f]\{32\}"
-    # <span class="go">5820c3674be8b1314f3a61c8d82646da34d684ac  bootstrap-2015Q3-i386.tar.gz</span>
-    # <span class="go">c150c0db1daddb4ec49592a7563c2838760bfb8b  bootstrap-2015Q3-x86_64.tar.gz</span>
-
+    # curl -s https://pkgsrc.joyent.com/install-on-osx/ ; https://pkgsrc.joyent.com/install-on-linux/
+    #
+    # curl -s https://pkgsrc.joyent.com/install-on-osx/ | 
+    # xargs -0 echo | 
+    # grep "[0-9a-f]\{32\}" | 
+    # awk '/<span class="go">/ 
+    # { 
+    #   gsub(/class="go">/, "") ; 
+    #   sub(/<\/span>/, "") ;  
+    #     if ($3 ~ "i386") 
+    #       print "a="$2 " " "b="$3 ; 
+    #     if ($3 ~ "x86_64") 
+    #       print "c="$2 " " "d="$3 ; 
+    # }'
 
     PKGSRC_SITE="http://pkgsrc.joyent.com/packages/$OS"
     PKGSRC_QUARTER="$(date +"%Y %m" |\
                         ${awk} '{ Q=int( $2/4 ); Y=$1
                             if ( Q == 0 ){ Q=4; Y=Y-1; }
-                                printf( "%sQ%s\n", Y, Q); 
+                                printf( "%sQ%s\n", Y, Q ); 
                             }')"
 
     BOOTSTRAP_PATH="${PKGSRC_SITE}/bootstrap/"
