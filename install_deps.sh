@@ -27,6 +27,11 @@ install_pkgin()
                             }')"
 
     BOOTSTRAP_PATH="${PKGSRC_SITE}/bootstrap/"
+    PKGIN_LOCALBASE=$(pkg_info -QLOCALBASE pkgin)
+    PKGIN_LOCALBASE_BIN="$PKGIN_LOCALBASE/bin"
+    PKGIN_LOCALBASE_SBIN="$PKGIN_LOCALBASE/sbin"
+    PKGIN_LOCALBASE_MAN="$PKGIN_LOCALBASE/man"
+    PKGIN_BIN="$PKGIN_LOCALBASE_BIN/pkgin"
     
     # Maybe a case ?
     # + where to find the SHA1SUM ?!
@@ -34,19 +39,17 @@ install_pkgin()
 
         BOOTSTRAP_TAR="bootstrap-${PKGSRC_QUARTER}-el6-x86_64.tar.gz"
         BOOTSTRAP_SHA="493e0071508064d1d1ea32956d2ede70f3c20c32"
-        PKGIN_BIN="/usr/pkg/bin/pkgin"
-        export PATH=/usr/pkg/sbin:/usr/pkg/bin:$PATH
-        export MANPATH=/usr/pkg/man:$MANPATH
+        export PATH=$PKGIN_LOCALBASE_SBIN:$PKGIN_LOCALBASE_BIN:$PATH
+        export MANPATH=$PKGIN_LOCALBASE_MAN:$MANPATH
 
     elif echo "$OS" | grep -q "[Dd]arwin" ; then
-        PKGIN_BIN="/opt/pkg/bin/pkgin"
-        export PATH=$PATH:/opt/pkg/sbin:/opt/pkg/bin
+        export PATH=$PATH:$PKGIN_LOCALBASE_SBIN:$PKGIN_LOCALBASE_BIN
 
         if [ ! -f /etc/paths.d/pkgsrc ]; then
-            printf "/opt/pkg/bin\n/opt/pkg/sbin\n" >> /etc/paths.d/pkgsrc
+            printf "%s\n%s\n" "$PKGIN_LOCALBASE_BIN" "$PKGIN_LOCALBASE_SBIN" >> /etc/paths.d/pkgsrc
         fi
         if [ ! -f /etc/manpaths.d/pkgsrc ]; then
-            printf "MANPATH /opt/pkg/man\nMANPATH /opt/pkg/share/man\n" >> /etc/manpaths.d/pkgsrc
+            printf "MANPATH %s\nMANPATH %s/share/man\n" "$PKGIN_LOCALBASE_MAN" "$PKGIN_LOCALBASE" >> /etc/manpaths.d/pkgsrc
         fi
 
         if [ ! $(grep "path_helper" $SHELLRC) ]; then
