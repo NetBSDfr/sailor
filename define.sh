@@ -11,6 +11,7 @@ ls=$(command -v ls)
 od=$(command -v od)
 pax="${debug}$(command -v pax) -rwpe"
 pkgin="$(command -v pkgin)"
+pkg_info="$(command -v pkg_info)"
 mkdir="$(command -v mkdir) -p"
 rm="$(command -v rm) -f"
 rsync="$(command -v rsync) -av"
