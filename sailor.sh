@@ -154,18 +154,48 @@ cmd_run()
 
 export_to_tar()
 {
-	# TODO: find location to store export.
 	# TODO: try to Use pax ?
-	${tar} czfp /tmp/${shipname}-{$DDATE}.tar.gz ${1}
+	shipid=${1}
+	# euuuuurkkk
+	sailor="./sailor.sh"
+
+	if [ ! -f ${varrun}/${shipid}.ship ]; then
+		echo "ship must run before the start of the export."
+		exit 1
+	else
+		. ${varrun}/${shipid}.ship
+		printf "Need to park the ship during the export [y/N]? "
+		read confirm
+		if [ "$confirm" != "y" ] ; then
+			echo "Abort export"
+			exit 1
+		fi
+
+		${sailor} stop ${shipid}
+
+		img="${shippath%/*}/images"
+		[ ! -d ${img} ] && ${mkdir} -p "${img}"
+		
+		echo "Exporting $shipid to ${img}/${shipname}-${DDATE}..."
+
+		${tar} czfp "${img}/${shipname}-${DDATE}".tar.gz ${shippath}
+
+		${sailor} start ${cf}
+	fi
 }
 
 start_chroot()
 {
-	# TODO: test if shipid exists.
-	shipid=${1} ; shell=${2}
-	. ${varrun}/${shipid}.ship
-
-	eval ${chroot} ${shippath} ${shell}
+	shipid=${1}
+	shell=${2}
+	
+	if [ ! -f ${varrun}/${shipid}.ship ] ; then
+		echo "ship is not running, sail is not possible"
+		exit 1
+	else
+		. ${varrun}/${shipid}.ship
+		eval ${chroot} ${shippath} ${shell}
+	fi
 }
 
 case ${cmd} in
@@ -207,14 +237,12 @@ destroy)
 	esac
 	;;
 export)
-	if ! has_shipid; then
-		echo "Ship does not exist"
-		exit 1
-	fi
-	export_to_tar ${shippath}
+	export_to_tar ${param}
+	exit 0
 	;;
-launch)
+sail)
 	start_chroot ${param} ${3}
+	exit 0
 	;;
 start|stop|status)
 	# parameter is a ship id
