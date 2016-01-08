@@ -151,13 +151,11 @@ install_3rd_party_pkg()
     pkg=${1}
     test_if_pkgin_is_installed
 
-    if [ -z ${pkg} ] ; then
-        ${pkgin} search ${pkg}
+    ${pkgin} search ${pkg}
         if [ "$?" != 0 ]; then
             printf "Package not found.\n"
             exit 1
         else
             ${pkgin} -y in ${pkg}
         fi
-    fi
 }

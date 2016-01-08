@@ -7,6 +7,7 @@ cp=$(${debug}command -v cp)
 date=$(command -v date)
 grep=$(command -v grep)
 gpg=$(command -v gpg)
+id=$(command -v id)
 ls=$(command -v ls)
 od=$(command -v od)
 pax="${debug}$(command -v pax) -rwpe"
