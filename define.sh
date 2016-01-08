@@ -28,4 +28,4 @@ ARCH=$(uname -m)
 DDATE=$(date +%Y%m%d)
 OS=$(uname -s)
 SHELLRC=~/.$(echo $SHELL | awk -F/ '{print$NF}')rc
-PKGIN_VARDB="/var/db/pkgin"
+PKGIN_VARDB="$(pkg_info -QVARBASE pkgin)/db/pkgin"
