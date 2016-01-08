@@ -1,4 +1,4 @@
-#!/bin/sh
+#! /usr/bin/env sh
 
 usage()
 {
@@ -20,7 +20,7 @@ param=${2}
 . ./platform.sh
 . ./deps.sh
 
-if [ "`${id} -u`" != "0" ]; then
+if [ "$(${id} -u)" != "0" ]; then
 	echo "please run $0 with UID 0"
 	exit 1
 fi

@@ -12,11 +12,11 @@ do
 	binpath=`which ${bin}`
 	if [ -z "${binpath}" ]; then
 		echo "${bin} is required for sailor to work"
-		echo "Would you like to install ${bin}? [y/N]"
+		printf "Would you like to install ${bin}? [y/N] "
 		read confirm
 		if [ "$confirm" = "y" ]; then
 			. ./install_deps.sh
-			install_3rd_party_pkg "{bin}"
+			install_3rd_party_pkg "${bin}"
 		else
 		  echo "${bin} is required for sailor to work"
 			exit 1
