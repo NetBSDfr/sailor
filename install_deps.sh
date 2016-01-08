@@ -21,21 +21,6 @@ sanity_check()
 
 install_pkgin()
 {
-    # IDEA
-    # curl -s https://pkgsrc.joyent.com/install-on-osx/ ; https://pkgsrc.joyent.com/install-on-linux/
-    #
-    # curl -s https://pkgsrc.joyent.com/install-on-osx/ | 
-    # xargs -0 echo | 
-    # grep "[0-9a-f]\{32\}" | 
-    # awk '/<span class="go">/ 
-    # { 
-    #   gsub(/class="go">/, "") ; 
-    #   sub(/<\/span>/, "") ;  
-    #     if ($3 ~ "i386") 
-    #       print "a="$2 " " "b="$3 ; 
-    #     if ($3 ~ "x86_64") 
-    #       print "c="$2 " " "d="$3 ; 
-    # }'
 
     PKGSRC_SITE="http://pkgsrc.joyent.com/packages/$OS"
     PKGSRC_QUARTER="$(date +"%Y %m" |\
@@ -50,13 +35,24 @@ install_pkgin()
     PKGIN_LOCALBASE_SBIN="$PKGIN_LOCALBASE/sbin"
     PKGIN_LOCALBASE_MAN="$PKGIN_LOCALBASE/man"
     PKGIN_BIN="$PKGIN_LOCALBASE_BIN/pkgin"
-    
+
+    JWP="https://pkgsrc.joyent.com/install-on-"
+
     # Maybe a case ?
     # + where to find the SHA1SUM ?!
     if [ "$OS" = "Linux" ]; then
+        if ${curl} -s --max-time 1 --head --request GET "$JWP"linux/ | grep "200 OK" >/dev/null 2>&1; then
+            ${curl} --connect-timeout 2 --max-time 3 --silent "$JWP"linux/ |
+            ${egrep} -o '[0-9a-z]+{32}.+x86_64.tar.gz' |
+            while read hash arch; do
+                BOOTSTRAP_TAR="$arch"
+                BOOTSTRAP_SHA="$hash"
+            done
+        else
+            BOOTSTRAP_TAR="bootstrap-${PKGSRC_QUARTER}-el6-x86_64.tar.gz"
+            BOOTSTRAP_SHA="493e0071508064d1d1ea32956d2ede70f3c20c32"
+        fi
 
-        BOOTSTRAP_TAR="bootstrap-${PKGSRC_QUARTER}-el6-x86_64.tar.gz"
-        BOOTSTRAP_SHA="493e0071508064d1d1ea32956d2ede70f3c20c32"
         export PATH=$PKGIN_LOCALBASE_SBIN:$PKGIN_LOCALBASE_BIN:$PATH
         export MANPATH=$PKGIN_LOCALBASE_MAN:$MANPATH
 
@@ -78,13 +74,30 @@ install_pkgin()
         fi
 
         if [ "$ARCH" = "x86_64" ]; then
-            BOOTSTRAP_TAR="bootstrap-${PKGSRC_QUARTER}-x86_64.tar.gz"
-            BOOTSTRAP_SHA="c150c0db1daddb4ec49592a7563c2838760bfb8b"
+            if ${curl} -s --max-time 1 --head --request GET "$JWP"osx/ | grep "200 OK" >/dev/null 2>&1; then
+                ${curl} --connect-timeout 2 --max-time 3 --silent "$JWP"osx/ |
+                ${egrep} -o '[0-9a-z]+{32}.+(i386|x86_64).tar.gz' |
+                while read hash arch; do
+                    BOOTSTRAP_TAR="$arch"
+                    BOOTSTRAP_SHA="$hash"
+                done
+            else
+                BOOTSTRAP_TAR="bootstrap-${PKGSRC_QUARTER}-x86_64.tar.gz"
+                BOOTSTRAP_SHA="c150c0db1daddb4ec49592a7563c2838760bfb8b"
+            fi
         else
-            BOOTSTRAP_TAR="bootstrap-${PKGSRC_QUARTER}-i386.tar.gz"
-            BOOTSTRAP_SHA="5820c3674be8b1314f3a61c8d82646da34d684ac"
+            if ${curl} -s --max-time 1 --head --request GET "$JWP"osx/ | grep "200 OK" >/dev/null 2>&1; then
+                ${curl} --connect-timeout 2 --max-time 3 --silent "$JWP"osx/ |
+                ${egrep} -o '[0-9a-z]+{32}.+i386.tar.gz' |
+                while read hash arch; do
+                    BOOTSTRAP_TAR="$arch"
+                    BOOTSTRAP_SHA="$hash"
+                done
+            else
+                BOOTSTRAP_TAR="bootstrap-${PKGSRC_QUARTER}-i386.tar.gz"
+                BOOTSTRAP_SHA="5820c3674be8b1314f3a61c8d82646da34d684ac"
+            fi
         fi
-
     else
         printf "Not supported yet.\n"
         exit 1
