@@ -4,7 +4,10 @@ link_target()
 {
 	for lnk in ${reqs}
 	do
-		[ -h ${lnk} ] && reqs="${reqs} `${readlink} ${lnk}`"
+		if [ -h ${lnk} ]; then
+			realfile=`${readlink} ${lnk}`
+			[ -f "${realfile}" ] && reqs="${reqs} ${realfile}"
+		fi
 	done
 }
 
@@ -37,7 +40,7 @@ bin_requires()
 	
 		[ ! -z "${reqs}" ] && sync_reqs ${1}
 	fi
-	${pax} ${1} ${shippath}/
+	[ -f ${1} ] && ${pax} ${1} ${shippath}/
 }
 
 pkg_requires()
