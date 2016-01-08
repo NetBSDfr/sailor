@@ -3,7 +3,8 @@
 usage()
 {
 	echo "usage: $0 build <ship.conf>"
-	echo "       $0 launch <ship id> <shell>"
+	echo "       $0 export <ship id>"
+	echo "       $0 sail <ship id> <shell>"
 	echo "       $0 start <ship.conf>"
 	echo "       $0 stop <ship id>"
 	echo "       $0 status <ship id>"
