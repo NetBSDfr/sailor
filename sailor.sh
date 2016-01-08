@@ -159,6 +159,15 @@ export_to_tar()
 	${tar} czfp /tmp/${shipname}-{$DDATE}.tar.gz ${1}
 }
 
+start_chroot()
+{
+	# TODO: test if shipid exists.
+	shipid=${1} ; shell=${2}
+	. ${varrun}/${shipid}.ship
+
+	eval ${chroot} ${shippath} ${shell}
+}
+
 case ${cmd} in
 build|create|make)
 	if [ -z "${shippath}" -o "${shippath}" = "/" ]; then
@@ -204,6 +213,9 @@ export)
 	fi
 	export_to_tar ${shippath}
 	;;
+launch)
+	start_chroot ${param} ${3}
+	;;
 start|stop|status)
 	# parameter is a ship id
 	if [ ! -f ${param} ]; then
@@ -246,8 +258,8 @@ ls)
 		[ ! -f "${f}" ] && exit 0
 		. ${f}
 		. ${cf}
-		printf "%s\t%19s\t%s\n" "Ship ID" "Ship name" "Config. file"
-		printf "%20s\t%50s\t%50s\n" "${id}" "${shipname}" "${cf}"
+		printf "%s\t%25s\t%s\n" "Ship ID" "Ship name" "Config. file"
+		printf "%s\t%s\t%27s\n" "${id}" "${shipname}" "${cf}"
 	done
 	;;
 *)
