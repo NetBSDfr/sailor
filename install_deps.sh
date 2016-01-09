@@ -21,6 +21,14 @@ sanity_check()
 
 install_pkgin()
 {
+    if [ "$OS" = "Linux" ]; then
+        PKGIN_LOCALBASE="/usr/pkg"
+    elif echo "$OS" | grep -q "[Dd]arwin" ; then
+        PKGIN_LOCALBASE="/opt/pkg"
+    else
+        printf "System not yet supported, sorry.\n"
+        exit 1
+    fi
 
     PKGSRC_SITE="http://pkgsrc.joyent.com/packages/$OS"
     PKGSRC_QUARTER="$(date +"%Y %m" |\
@@ -30,7 +38,6 @@ install_pkgin()
                             }')"
 
     BOOTSTRAP_PATH="${PKGSRC_SITE}/bootstrap/"
-    PKGIN_LOCALBASE=$(pkg_info -QLOCALBASE pkgin)
     PKGIN_LOCALBASE_BIN="$PKGIN_LOCALBASE/bin"
     PKGIN_LOCALBASE_SBIN="$PKGIN_LOCALBASE/sbin"
     PKGIN_LOCALBASE_MAN="$PKGIN_LOCALBASE/man"
