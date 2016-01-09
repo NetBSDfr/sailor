@@ -157,8 +157,7 @@ export_to_tar()
 {
 	# TODO: try to Use pax ?
 	shipid=${1}
-	# euuuuurkkk
-	sailor="./sailor.sh"
+	sailor="$0"
 
 	if [ ! -f ${varrun}/${shipid}.ship ]; then
 		echo "ship must run before the start of the export."
@@ -176,10 +175,16 @@ export_to_tar()
 
 		img="${shippath%/*}/images"
 		[ ! -d ${img} ] && ${mkdir} -p "${img}"
-		
+
 		echo "Exporting $shipid to ${img}/${shipname}-${DDATE}..."
 
-		${tar} czfp "${img}/${shipname}-${DDATE}".tar.gz ${shippath}
+		${tar} czfp "${img}/${shipname}-${DDATE}".tar.gz ${shippath} >/dev/null 2>&1
+
+		# Delete file if export fail.
+		if [ "$?" != 0 ] && [ -f "${img}/${shipname}-${DDATE}".tar.gz ]; then
+			printf "Export has failed, please retry.\n"
+			${rm} "${img}/${shipname}-${DDATE}".tar.gz
+		fi
 
 		${sailor} start ${cf}
 	fi
