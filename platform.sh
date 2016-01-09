@@ -1,22 +1,6 @@
-cat=`which cat`
-sh=`which sh`
-id=`which id`
-pax="${debug}`which pax` -rwpe"
-cp=`${debug}which cp`
-chown=`which chown`
-chmod=`which chmod`
-awk=`which awk`
-sort=`which sort`
-grep=`which grep`
-tar=`which tar`
-mkdir="`which mkdir` -p"
-touch=`which touch`
-rm="`which rm` -f"
-ls=`which ls`
-od=`which od`
-tr=`which tr`
-umount=`which umount`
-OS=`uname -s`
+#! /usr/bin/env sh
+
+. ./define.sh
 
 # pkg_install additional tools
 useradd=`which useradd`
@@ -28,12 +12,18 @@ do
 	binpath=`which ${bin}`
 	if [ -z "${binpath}" ]; then
 		echo "${bin} is required for sailor to work"
-		exit 1
+		printf "Would you like to install ${bin}? [y/N] "
+		read confirm
+		if [ "$confirm" = "y" ]; then
+			. ./install_deps.sh
+			install_3rd_party_pkg "${bin}"
+		else
+		  echo "${bin} is required for sailor to work"
+			exit 1
+		fi
 	fi
 	eval ${bin}=${binpath}
 done
-
-rsync="${rsync} -av"
 
 case $OS in
 Darwin)

@@ -1,8 +1,10 @@
-#!/bin/sh
+#! /usr/bin/env sh
 
 usage()
 {
 	echo "usage: $0 build <ship.conf>"
+	echo "       $0 export <ship id>"
+	echo "       $0 sail <ship id> <shell>"
 	echo "       $0 start <ship.conf>"
 	echo "       $0 stop <ship id>"
 	echo "       $0 status <ship id>"
@@ -19,7 +21,7 @@ param=${2}
 . ./platform.sh
 . ./deps.sh
 
-if [ "`${id} -u`" != "0" ]; then
+if [ "$(${id} -u)" != "0" ]; then
 	echo "please run $0 with UID 0"
 	exit 1
 fi
@@ -151,6 +153,57 @@ cmd_run()
 	done
 }
 
+export_to_tar()
+{
+	# TODO: try to Use pax ?
+	shipid=${1}
+	sailor="$0"
+
+	if [ ! -f ${varrun}/${shipid}.ship ]; then
+		echo "ship must run before the start of the export."
+		exit 1
+	else
+		. ${varrun}/${shipid}.ship
+		printf "Need to park the ship during the export [y/N]? "
+		read confirm
+		if [ "$confirm" != "y" ] ; then
+			echo "Abort export"
+			exit 1
+		fi
+
+		${sailor} stop ${shipid}
+
+		img="${shippath%/*}/images"
+		[ ! -d ${img} ] && ${mkdir} -p "${img}"
+
+		echo "Exporting $shipid to ${img}/${shipname}-${DDATE}..."
+
+		${tar} czfp "${img}/${shipname}-${DDATE}".tar.gz ${shippath} >/dev/null 2>&1
+
+		# Delete file if export fail.
+		if [ "$?" != 0 ] && [ -f "${img}/${shipname}-${DDATE}".tar.gz ]; then
+			printf "Export has failed, please retry.\n"
+			${rm} "${img}/${shipname}-${DDATE}".tar.gz
+		fi
+
+		${sailor} start ${cf}
+	fi
+}
+
+start_chroot()
+{
+	shipid=${1}
+	shell=${2}
+	
+	if [ ! -f ${varrun}/${shipid}.ship ] ; then
+		echo "ship is not running, sail is not possible"
+		exit 1
+	else
+		. ${varrun}/${shipid}.ship
+		eval ${chroot} ${shippath} ${shell}
+	fi
+}
+
 case ${cmd} in
 build|create|make)
 	if [ -z "${shippath}" -o "${shippath}" = "/" ]; then
@@ -188,6 +241,14 @@ destroy)
 		exit 0
 		;;
 	esac
+	;;
+export)
+	export_to_tar ${param}
+	exit 0
+	;;
+sail)
+	start_chroot ${param} ${3}
+	exit 0
 	;;
 start|stop|status)
 	# parameter is a ship id
@@ -231,7 +292,8 @@ ls)
 		[ ! -f "${f}" ] && exit 0
 		. ${f}
 		. ${cf}
-		echo "${id} - ${shipname} - ${cf}"
+		printf "%s\t%25s\t%s\n" "Ship ID" "Ship name" "Config. file"
+		printf "%s\t%s\t%27s\n" "${id}" "${shipname}" "${cf}"
 	done
 	;;
 *)
