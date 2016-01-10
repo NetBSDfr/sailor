@@ -166,7 +166,7 @@ rc_d_name()
 		pkgext=${pkgname##*.}
 		pkgname=${pkgname%*.tgz}.tmp.${pkgext}
 	fi
-	for rcd in $(${tar} zxvf ${pkgname} 2>&1|${grep} -oE '[^\ \t]+/rc.d/')
+	for rcd in $(${tar} zxvf ${pkgname} 2>&1|${grep} -oE '[^\ \t]+/rc.d/.+')
 	do
 		eval $(${grep} '^name=' ${rcd})
 		[ ! -z "${name}" ] && \
