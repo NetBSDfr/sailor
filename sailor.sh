@@ -104,7 +104,9 @@ build()
 	[ -f ${master_passwd} ] && ${chmod} 600 ${master_passwd}
 	
 	need_tools pkgin
-	
+	# reinstall pkgin properly
+	${pkgin} -y -c ${shippath} in pkgin
+
 	${pkgin} -y -c ${shippath} update
 	
 	for pkg in ${packages}
@@ -118,6 +120,7 @@ build()
 			pkg_requires ${p}
 		done
 	done
+
 	if [ ! -z "${packages}" ]; then
 		PKG_RCD_SCRIPTS=yes ${pkgin} -y -c ${shippath} in ${packages}
 		${pkgin} -y clean

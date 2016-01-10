@@ -2,19 +2,26 @@
 
 link_target()
 {
-	for lnk in ${reqs}
-	do
-		if [ -h ${lnk} ]; then
-			realfile=`${readlink} ${lnk}`
-			[ -f "${realfile}" ] && reqs="${reqs} ${realfile}"
+	lnk=${1}
+
+	if [ -h ${lnk} ]; then
+		realfile=`${readlink} ${lnk}`
+		if [ ! -z "${realfile}" ]; then
+			reqs="${reqs} ${realfile}"
 		fi
-	done
+	fi
 }
 
 sync_reqs()
 {
+	[ -z "${reqs}" ] && return
+
 	printf "copying requirements for ${1}.. "
-	link_target ${reqs}
+	for req in ${reqs}
+	do
+		# add symlinks targets
+		link_target ${req}
+	done
 
 	${pax} ${reqs} ${shippath}/
 	echo "done"
@@ -23,6 +30,7 @@ sync_reqs()
 all_libs() {
 	for l in `p_ldd ${1}`
 	do
+		# library already recorded ?
 		if ! echo ${libs} | ${grep} -sq ${l}; then
 			libs="${libs} ${l}"
 			all_libs ${l}
@@ -33,22 +41,28 @@ all_libs() {
 bin_requires()
 {
 	libs=""
+	reqs=""
 	# grep link matches both symlinks and ELF executables ;)
 	if  file ${1}|${grep} -sqE '(link|Mach)'; then
 		all_libs ${1}
 		reqs="${libs} ${1}"
-	
-		[ ! -z "${reqs}" ] && sync_reqs ${1}
+
+		sync_reqs ${1}
 	fi
+
 	[ -f ${1} ] && ${pax} ${1} ${shippath}/
 }
 
 pkg_requires()
 {
-	reqs=`${pkgin} pkg-build-defs ${1} | \
-		awk -F= '/^REQUIRES=/ { print $2 }'`
+	reqs=""
+	pkg=${1%-[0-9]*}
+	for req in `${pkgin} pbd ${pkg}|${awk} -F= '/^REQUIRES=/ { print $2 }'`
+	do
+		[ -e ${req} ] && reqs="${reqs} ${req}"
+	done
 
-	[ ! -z "${reqs}" ] && sync_reqs ${1}
+	sync_reqs ${pkg}
 }
 
 # extract needed tools from pkg_add install script
