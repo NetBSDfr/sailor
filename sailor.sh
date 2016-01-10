@@ -166,13 +166,12 @@ rc_d_name()
 		pkgext=${pkgname##*.}
 		pkgname=${pkgname%*.tgz}.tmp.${pkgext}
 	fi
-	for rcd in $(${tar} zxvf ${pkgname} 2>/dev/null|${grep} '/rc.d/')
+	for rcd in $(${tar} zxvf ${pkgname} 2>&1|${grep} '/rc.d/')
 	do
 		eval $(${grep} '^name=' ${rcd})
 		[ ! -z "${name}" ] && \
 			echo "Likely name for service name: ${name}"
 	done
-	cd -
 	rm -rf ${tempdir}
 }
 
