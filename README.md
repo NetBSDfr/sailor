@@ -60,18 +60,35 @@ Starting nginx.
 # ./sailor.sh destroy ./nginx.conf
 ```
 
+* Display the `rc.d` name for a service
+
+```
+# ./sailor.sh rcd apache
+Likely name for service name: apache
+```
+
 ## configuration file
 
 A ship is defined by its configuration file which contains:
 
-* `services`: the `rc.d` friendly names for services to run
+_mandatory_
+
 * `shipname`: the convenient name you'd like to give to your ship
-* `packages`: the packages you'd like to install within your ship
 * `shippath`: full path to your ship
-* `shipbins`: binaries from the host system you'd like to copy to the ship
+
+_most likely_
+
+* `services`: the `rc.d` friendly names for services to run(*)
+* `packages`: the packages you'd like to install within your ship
+
+(*) the `rc.d` or _init_ script is generally bundled with the service package,
+it is it which is capable of starting or stopping the service. Most of the
+times, it has the same name as the service itself, but it is safer to check this
+out using `sailor`'s `rc.d` function.
 
 _optional_
 
+* `shipbins`: binaries from the host system you'd like to copy to the ship
 * `ro_mounts`: read-only mount points to the ship (NetBSD only for now)
 * `rw_mounts`: read/write mount points to the ship (NetBSD only for now)
 * `run_at_build`: run command at build time, can be repeated
