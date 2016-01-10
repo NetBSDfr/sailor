@@ -170,7 +170,7 @@ rc_d_name()
 	do
 		eval $(${grep} '^name=' ${rcd})
 		[ ! -z "${name}" ] && \
-			echo "Likely name for service name: ${name}"
+			echo "likely name for service: ${name}"
 	done
 	rm -rf ${tempdir}
 }
