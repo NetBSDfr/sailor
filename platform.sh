@@ -16,6 +16,7 @@ ls=`which ls`
 od=`which od`
 tr=`which tr`
 umount=`which umount`
+curl=`which curl`
 OS=`uname -s`
 
 # pkg_install additional tools
@@ -23,7 +24,7 @@ useradd=`which useradd`
 groupadd=`which groupadd`
 
 # needed 3rd party programs
-for bin in pkg_info pkg_tarup pkgin rsync
+for bin in pkg_info pkg_tarup pkgin rsync curl
 do
 	binpath=`which ${bin}`
 	if [ -z "${binpath}" ]; then

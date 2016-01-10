@@ -151,6 +151,31 @@ cmd_run()
 	done
 }
 
+rc_d_name()
+{
+	pkgurl=$(${pkgin} pkg-build-defs ${1} | \
+		${grep} -oE "(ft|ht)tps?://[^:]+t[bg]z")
+	[ -z "${pkgurl}" ] && exit 1
+	pkgname=${pkgurl##*/}
+	tempdir=$(mktemp -d /tmp/_sailor.XXXXX)
+	cd ${tempdir}
+	${curl} -s -o ${pkgname} "${pkgurl}"
+	if ! echo "$(file -b ${pkgname})"|${grep} gzip >/dev/null 2>&1; then
+		# ar does not support stdin as argument
+		ar x ${pkgname}
+		pkgext=${pkgname##*.}
+		pkgname=${pkgname%*.tgz}.tmp.${pkgext}
+	fi
+	for rcd in $(${tar} zxvf ${pkgname} 2>/dev/null|${grep} '/rc.d/')
+	do
+		eval $(${grep} '^name=' ${rcd})
+		[ ! -z "${name}" ] && \
+			echo "Likely name for service name: ${name}"
+	done
+	cd -
+	rm -rf ${tempdir}
+}
+
 case ${cmd} in
 build|create|make)
 	if [ -z "${shippath}" -o "${shippath}" = "/" ]; then
@@ -233,6 +258,9 @@ ls)
 		. ${cf}
 		echo "${id} - ${shipname} - ${cf}"
 	done
+	;;
+rcd)
+	rc_d_name ${2}
 	;;
 *)
 	usage
