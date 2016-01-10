@@ -64,7 +64,7 @@ Starting nginx.
 
 ```
 # ./sailor.sh rcd apache
-Likely name for service name: apache
+likely name for service: apache
 ```
 
 ## configuration file
