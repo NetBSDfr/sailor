@@ -99,7 +99,7 @@ build()
 	[ -d ships/${shipname} ] && ${rsync} ships/${shipname}/ ${shippath}/
 
 	# ${prefix} changes depending on the OS, configurations to be copied
-	# to ship's ${prefix} mare located in ships/${shipname}/PREFIX and
+	# to ship's ${prefix} are located in ships/${shipname}/PREFIX and
 	# then copied to ${shippath}/PREFIX. The following will move them to
 	# the correct ${prefix}
 	[ -d ${shippath}/PREFIX ] && \
