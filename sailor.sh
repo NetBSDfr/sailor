@@ -7,6 +7,7 @@ usage()
 	echo "       $0 stop <ship id>"
 	echo "       $0 status <ship id>"
 	echo "       $0 destroy <ship.conf>"
+	echo "       $0 rcd <package>"
 	echo "       $0 ls"
 	exit 1
 }
