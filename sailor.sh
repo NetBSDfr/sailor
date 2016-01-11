@@ -34,6 +34,8 @@ reqs=""
 libs=""
 varbase=`${pkg_info} -QVARBASE pkgin`
 varrun="${varbase}/run/sailor"
+prefix=`${pkg_info} -QLOCALBASE pkgin`
+sysconfdir=`${pkg_info} -QPKG_SYSCONFDIR pkgin`
 
 [ ! -d "${varrun}" ] && ${mkdir} ${varrun}
 
@@ -45,10 +47,6 @@ has_services()
 build()
 {
 	[ ! -d ${shippath} ] && ${mkdir} ${shippath} || exit 1
-
-	# install wanted binaries
-	prefix=`${pkg_info} -QLOCALBASE pkgin`
-	sysconfdir=`${pkg_info} -QPKG_SYSCONFDIR pkgin`
 
 	# copy binaries and dependencies from host
 	for bin in ${def_bins} ${shipbins}
@@ -109,7 +107,8 @@ build()
 	${pkgin} -y -c ${shippath} in pkgin
 
 	${pkgin} -y -c ${shippath} update
-	
+
+	pkg_reqs_done="${packages}"
 	for pkg in ${packages}
 	do
 		# retrieve dependencies names
@@ -117,8 +116,13 @@ build()
 			awk '/^\t/ {print $1}'` ${pkg}"
 		for p in ${pkg_reqs}
 		do
+			# package requirements already copied
+			if echo "${pkg_reqs_done}"|${grep} -sq ${p}; then
+				continue
+			fi
 			# install all dependencies requirements
 			pkg_requires ${p}
+			pkg_reqs_done="${pkg_reqs_done} ${p}"
 		done
 	done
 
