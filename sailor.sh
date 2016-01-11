@@ -97,11 +97,14 @@ build()
 	[ -d ${common} ] && ${rsync} ${common}/ ${shippath}/
 	# populate 3rd party
 	[ -d ships/${shipname} ] && ${rsync} ships/${shipname}/ ${shippath}/
+
+	[ -d ${shippath}/PREFIX ] && \
+		mv -f ${shippath}/PREFIX/* ${shippath}/${prefix}/
 	# fix etc perms
 	${chown} -R root:wheel ${shippath}/etc
 	master_passwd=${shippath}/etc/master.passwd
 	[ -f ${master_passwd} ] && ${chmod} 600 ${master_passwd}
-	
+
 	need_tools pkgin
 	# reinstall pkgin properly
 	${pkgin} -y -c ${shippath} in pkgin
