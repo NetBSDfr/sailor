@@ -99,6 +99,35 @@ _optional_
 * `run_at_stop`: run command at stop time, can be repeated
 * `run_at_destroy`: run command at destroy time, can be repeated
 
+## real life example
+
+Fire up a fully working [nginx][3] + [php-fpm][4] stack on Mac OS X in less
+than 5 minutes:
+
+```
+$ git clone https://github.com/NetBSDfr/sailor.git
+$ cd sailor
+$ sudo -E ./sailor.sh build examples/nginxphp.conf
+$ sudo -E ./sailor.sh start examples/nginxphp.conf
+Starting nginx.
+Starting php_fpm.
+
+nginx is listening on port 1080
+
+$ curl -I localhost:1080
+HTTP/1.1 200 OK
+Server: nginx/1.9.4
+Date: Mon, 11 Jan 2016 15:40:53 GMT
+Content-Type: text/html; charset=UTF-8
+Connection: keep-alive
+X-Powered-By: PHP/5.6.13
+```
+
+PHP source code can be found in `nginxphp/var/www/php` which you can chown to
+your own user and populate with the PHP code you want.
+
 [0]: https://en.wikipedia.org/wiki/Chroot
 [1]: http://pkgin.net
 [2]: http://saveosx.org/
+[3]: http://nginx.org/
+[4]: http://php.net/manual/en/install.fpm.php
