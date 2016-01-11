@@ -104,6 +104,8 @@ _optional_
 Fire up a fully working [nginx][3] + [php-fpm][4] and isolated stack on
 Mac OS X in less than 5 minutes:
 
+[Download and install Save OS X][5]
+
 ```
 $ git clone https://github.com/NetBSDfr/sailor.git
 $ cd sailor
@@ -131,3 +133,4 @@ your own user and populate with the PHP code you want.
 [2]: http://saveosx.org/
 [3]: http://nginx.org/
 [4]: http://php.net/manual/en/install.fpm.php
+[5]: http://saveosx.org/download-and-install/
