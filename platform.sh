@@ -98,4 +98,5 @@ esac
 # most installation and startup scripts also need /bin/sh
 def_bins="${def_bins} /usr/sbin/pwd_mkdb ${useradd} ${groupadd} \
 	${pkg_info} ${pkgin} /bin/sh /bin/test /sbin/nologin /bin/echo \
-	/bin/ps /bin/sleep `which sysctl` `which logger` `which kill` /bin/sh"
+	/bin/ps /bin/sleep `which sysctl` `which logger` `which kill` \
+	`which printf` /bin/sh"

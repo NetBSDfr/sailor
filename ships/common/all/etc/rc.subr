@@ -276,7 +276,7 @@ _find_processes()
 			    PID)
 				continue ;;
 			esac ; '"$_fp_match"'
-				echo -n "$_pref$_npid" ;
+				printf "$_pref$_npid" ;
 				_pref=" "
 				;;
 			esac
@@ -308,7 +308,7 @@ wait_for_pids()
 			break
 		fi
 		_list=$_nlist
-		echo -n ${_prefix:-"Waiting for PIDS: "}$_list
+		printf ${_prefix:-"Waiting for PIDS: "}$_list
 		_prefix=", "
 		sleep 2
 	done
@@ -908,11 +908,11 @@ load_rc_config_var()
 #
 rc_usage()
 {
-	echo -n 1>&2 "Usage: $0 [fast|force|one]("
+	printf 1>&2 "Usage: $0 [fast|force|one]("
 
 	_sep=
 	for _elem; do
-		echo -n 1>&2 "$_sep$_elem"
+		printf 1>&2 "$_sep$_elem"
 		_sep="|"
 	done
 	echo 1>&2 ")"
