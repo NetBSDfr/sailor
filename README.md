@@ -101,8 +101,8 @@ _optional_
 
 ## real life example
 
-Fire up a fully working [nginx][3] + [php-fpm][4] stack on Mac OS X in less
-than 5 minutes:
+Fire up a fully working [nginx][3] + [php-fpm][4] and isolated stack on
+Mac OS X in less than 5 minutes:
 
 ```
 $ git clone https://github.com/NetBSDfr/sailor.git
@@ -123,7 +123,7 @@ Connection: keep-alive
 X-Powered-By: PHP/5.6.13
 ```
 
-PHP source code can be found in `nginxphp/var/www/php` which you can chown to
+PHP source code can be found in `nginxphp/var/www/php` which you can `chown` to
 your own user and populate with the PHP code you want.
 
 [0]: https://en.wikipedia.org/wiki/Chroot
