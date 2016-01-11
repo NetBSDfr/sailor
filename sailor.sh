@@ -92,9 +92,12 @@ build()
 	${cp} /usr/share/zoneinfo/GMT ${shippath}/etc/localtime
 	${cp} /etc/resolv.conf ${shippath}/etc/
 	# custom /etc
-	common="ships/common/${OS}"
+	common="ships/common"
 	# populate commons
-	[ -d ${common} ] && ${rsync} ${common}/ ${shippath}/
+	for t in all ${OS}
+	do
+		[ -d ${common}/${t} ] && ${rsync} ${common}/${t}/ ${shippath}/
+	done
 	# populate 3rd party
 	[ -d ships/${shipname} ] && ${rsync} ships/${shipname}/ ${shippath}/
 
