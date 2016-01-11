@@ -234,7 +234,10 @@ start|stop|status)
 
 	has_services && for s in ${services}
 	do
-		chroot ${shippath} /etc/rc.d/${s} ${cmd}
+		if ! chroot ${shippath} /etc/rc.d/${s} ${cmd}; then
+			echo "error while chrooting to ${shippath}"
+			exit 1
+		fi
 	done
 	case ${cmd} in
 	start)

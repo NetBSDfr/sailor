@@ -1,0 +1,6 @@
+server {
+	server_name	localhost;
+	root		 /var/www/php;
+
+	include		php.conf;
+}

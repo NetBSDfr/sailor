@@ -1,0 +1,4 @@
+fastcgi_pass	unix:/tmp/fcgi-php.sock;
+fastcgi_index	index.php;
+fastcgi_param	SCRIPT_FILENAME $document_root$fastcgi_script_name;
+fastcgi_buffers	256 4k;
