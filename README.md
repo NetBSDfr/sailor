@@ -91,6 +91,9 @@ _optional_
 * `shipbins`: binaries from the host system you'd like to copy to the ship
 * `ro_mounts`: read-only mount points to the ship (NetBSD only for now)
 * `rw_mounts`: read/write mount points to the ship (NetBSD only for now)
+
+`run_at_*` commands are run in the chroot:
+
 * `run_at_build`: run command at build time, can be repeated
 * `run_at_start`: run command at start time, can be repeated
 * `run_at_stop`: run command at stop time, can be repeated
