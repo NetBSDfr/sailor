@@ -98,8 +98,12 @@ build()
 	# populate 3rd party
 	[ -d ships/${shipname} ] && ${rsync} ships/${shipname}/ ${shippath}/
 
+	# ${prefix} changes depending on the OS, configurations to be copied
+	# to ship's ${prefix} mare located in ships/${shipname}/PREFIX and
+	# then copied to ${shippath}/PREFIX. The following will move them to
+	# the correct ${prefix}
 	[ -d ${shippath}/PREFIX ] && \
-		mv -f ${shippath}/PREFIX/* ${shippath}/${prefix}/
+		${rsync} ${shippath}/PREFIX/ ${shippath}/${prefix}/
 	# fix etc perms
 	${chown} -R root:wheel ${shippath}/etc
 	master_passwd=${shippath}/etc/master.passwd
