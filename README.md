@@ -128,6 +128,11 @@ X-Powered-By: PHP/5.6.13
 PHP source code can be found in `nginxphp/var/www/php` which you can `chown` to
 your own user and populate with the PHP code you want.
 
+`nginx` configuration is located in `nginxphp/opt/pkg/etc/nginx` (on OSX), you
+might want to change its listen port in
+`nginxphp/opt/pkg/etc/nginx/global.conf`
+
+
 [0]: https://en.wikipedia.org/wiki/Chroot
 [1]: http://pkgin.net
 [2]: http://saveosx.org/
