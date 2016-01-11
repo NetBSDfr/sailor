@@ -101,7 +101,7 @@ _optional_
 
 ## real life example
 
-Fire up a fully working [nginx][3] + [php-fpm][4] and isolated stack on
+Fire up a fully working and isolated [nginx][3] + [php-fpm][4] stack on
 Mac OS X in less than 5 minutes:
 
 [Download and install Save OS X][5]
