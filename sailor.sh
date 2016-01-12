@@ -256,7 +256,7 @@ start|stop|status)
 		fi
 		. ${shipid}
 	# parameter is a ship conf file
-	elif [ "${1}" != "start" ]; then
+	elif [ "${cmd}" != "start" ]; then
 		echo "please use ship id $(${cat} ${shippath}/shipid)"
 		exit 1
 	fi
