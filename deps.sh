@@ -6,7 +6,11 @@ link_target()
 
 	if [ -h ${lnk} ]; then
 		realfile=`${readlink} ${lnk}`
-		if [ ! -z "${realfile}" ]; then
+		if [ -n "${realfile}" ]; then
+			if [ ! -f ${realfile} ]; then
+				d=$(dirname ${lnk})
+				realfile="${d}/${realfile}"
+			fi
 			reqs="${reqs} ${realfile}"
 		fi
 	fi
