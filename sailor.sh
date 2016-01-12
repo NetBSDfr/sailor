@@ -159,7 +159,7 @@ ipupdown()
 		eval address=\$ip_${iface}
 		[ -n "${address}" ]  && break
 	done
-	[ -z "${iface}" ] && return
+	[ -z "${iface}" -o -z "${address}" ] && return
 
 	${ifconfig} ${iface} ${address} ${action}
 }
