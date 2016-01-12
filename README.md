@@ -104,7 +104,7 @@ _optional_
 
 #### Fire up a fully working and isolated [nginx][3] + [php-fpm][4] stack
 
-[Download and install Save OS X][5]
+[Download and install Save OS X][5] if running Max OS X
 
 ```
 $ git clone https://github.com/NetBSDfr/sailor.git
@@ -134,7 +134,7 @@ might want to change its listen port in
 
 #### Fire up a fully working and isolated [nginx][3] + [nodejs][6] stack
 
-[Download and install Save OS X][5]
+[Download and install Save OS X][5] if running Max OS X
 
 ```
 $ git clone https://github.com/NetBSDfr/sailor.git
