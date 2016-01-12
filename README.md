@@ -102,7 +102,7 @@ _optional_
 
 ## real life examples
 
-* Fire up a fully working and isolated [nginx][3] + [php-fpm][4] stack on Mac OS X in less than 5 minutes:
+#### Fire up a fully working and isolated [nginx][3] + [php-fpm][4] stack
 
 [Download and install Save OS X][5]
 
@@ -132,7 +132,7 @@ your own user and populate with the PHP code you want.
 might want to change its listen port in
 `nginxphp/opt/pkg/etc/nginx/global.conf`
 
-* Fire up a fully working and isolated [nginx][3] + [nodejs][6] stack on Mac OS X in less than 5 minutes:
+#### Fire up a fully working and isolated [nginx][3] + [nodejs][6] stack
 
 [Download and install Save OS X][5]
 
