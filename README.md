@@ -100,10 +100,9 @@ _optional_
 * `run_at_stop`: run command at stop time, can be repeated
 * `run_at_destroy`: run command at destroy time, can be repeated
 
-## real life example
+## real life examples
 
-Fire up a fully working and isolated [nginx][3] + [php-fpm][4] stack on
-Mac OS X in less than 5 minutes:
+### Fire up a fully working and isolated [nginx][3] + [php-fpm][4] stack on Mac OS X in less than 5 minutes:
 
 [Download and install Save OS X][5]
 
@@ -133,6 +132,36 @@ your own user and populate with the PHP code you want.
 might want to change its listen port in
 `nginxphp/opt/pkg/etc/nginx/global.conf`
 
+### Fire up a fully working and isolated [nginx][3] + [nodejs][6] stack on Mac OS X in less than 5 minutes:
+
+[Download and install Save OS X][5]
+
+```
+$ git clone https://github.com/NetBSDfr/sailor.git
+$ cd sailor
+$ sudo -E ./sailor.sh build examples/nginxnode.conf
+$ sudo -E ./sailor.sh start examples/nginxnode.conf 
+Starting nginx.
+[PM2] Spawning PM2 daemon
+[PM2] PM2 Successfully daemonized
+[PM2] Starting hello.js in fork_mode (1 instance)
+[PM2] Done.
+┌──────────┬────┬──────┬───────┬────────┬─────────┬────────┬────────┬──────────┐
+│ App name │ id │ mode │ pid   │ status │ restart │ uptime │ memory │ watching │
+├──────────┼────┼──────┼───────┼────────┼─────────┼────────┼────────┼──────────┤
+│ hello    │ 0  │ fork │ 12874 │ online │ 0       │ 0s     │ 0 B    │ disabled │
+└──────────┴────┴──────┴───────┴────────┴─────────┴────────┴────────┴──────────┘
+ Use `pm2 show <id|name>` to get more details about an app
+
+nginx is listening on port 1080
+
+$ curl http://localhost:1080/
+Hello from inside the chroot!
+```
+
+`node` source code can be found in `nginxphp/var/node` which you can `chown` to
+your own user and populate with the `node` code you want.
+
 
 [0]: https://en.wikipedia.org/wiki/Chroot
 [1]: http://pkgin.net
@@ -140,3 +169,4 @@ might want to change its listen port in
 [3]: http://nginx.org/
 [4]: http://php.net/manual/en/install.fpm.php
 [5]: http://saveosx.org/download-and-install/
+[6]: https://nodejs.org/en/
