@@ -67,6 +67,12 @@ Starting nginx.
 likely name for service: apache
 ```
 
+* Run commands in the ship
+
+```
+# ./sailor.sh run 4ecd1896d35a66c7 ps axuwww
+```
+
 ## configuration file
 
 A ship is defined by its configuration file which contains:
