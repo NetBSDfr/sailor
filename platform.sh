@@ -17,6 +17,7 @@ od=`which od`
 tr=`which tr`
 umount=`which umount`
 curl=`which curl`
+ifconfig=`which ifconfig`
 OS=`uname -s`
 
 # pkg_install additional tools

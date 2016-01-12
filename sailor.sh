@@ -150,6 +150,20 @@ build()
 	echo ${shipid} > ${shippath}/shipid
 }
 
+ipupdown()
+{
+	[ "${1}" = "up" ] && action="alias" || action="-alias"
+
+	for iface in $(${ifconfig} -l)
+	do
+		eval address=\$ip_${iface}
+		[ -n "${address}" ]  && break
+	done
+	[ -z "${iface}" ] && return
+
+	${ifconfig} ${iface} ${address} ${action}
+}
+
 has_shipid()
 {
 	[ -f ${shippath}/shipid ] && return 0 || return 1
@@ -241,6 +255,10 @@ start|stop|status)
 			exit 1
 		fi
 		. ${shipid}
+	# parameter is a ship conf file
+	elif [ "${1}" != "start" ]; then
+		echo "please use ship id $(${cat} ${shippath}/shipid)"
+		exit 1
 	fi
 
 	has_services && for s in ${services}
@@ -260,9 +278,11 @@ start|stop|status)
 		echo "cf=${param}" >> ${varfile}
 		${cat} ${param} >> ${varfile}
 		# start user commands after the service is started
+		ipupdown up
 		cmd_run start ${param}
 		;;
 	stop)
+		ipupdown down
 		mounts umount
 		varfile=${varrun}/${param}.ship
 		# start user commands after the service is stopped

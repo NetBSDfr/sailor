@@ -91,6 +91,7 @@ _optional_
 * `shipbins`: binaries from the host system you'd like to copy to the ship
 * `ro_mounts`: read-only mount points to the ship (NetBSD only for now)
 * `rw_mounts`: read/write mount points to the ship (NetBSD only for now)
+* `ip_<iface>`: IP alias to add to `<iface>`
 
 `run_at_*` commands are run in the chroot:
 
