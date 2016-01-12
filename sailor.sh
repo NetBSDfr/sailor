@@ -154,7 +154,7 @@ ipupdown()
 {
 	[ "${1}" = "up" ] && action="alias" || action="-alias"
 
-	for iface in $(${ifconfig} -l)
+	for iface in $(iflist)
 	do
 		eval address=\$ip_${iface}
 		[ -n "${address}" ]  && break

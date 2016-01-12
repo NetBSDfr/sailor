@@ -48,6 +48,9 @@ Darwin)
 	mounts() {
 		true
 	}
+	iflist() {
+		${ifconfig} -l
+	}
 
 	readlink=`which readlink`
 	# dyld is OSX's dynamic loader
@@ -87,6 +90,9 @@ NetBSD)
 					${umount} ${shippath}/${mp}
 			done
 		done
+	}
+	iflist() {
+		${ifconfig} -l
 	}
 
 	readlink="`which readlink` -f"
