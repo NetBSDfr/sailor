@@ -176,6 +176,7 @@ get_shipid()
 
 at_cmd_run()
 {
+	[ ! -d ${shippath} ] && return
 	cmd=${1}; file=${2}
 	${grep} "^run_at_${cmd}" ${file}|while read line
 	do
@@ -213,14 +214,15 @@ rc_d_name()
 	rm -rf ${tempdir}
 }
 
+shipidfile=""
 # parameter is a ship id, source it
 if [ ! -f ${param} ]; then
-	shipid=${varrun}/${param}.ship
-	if [ ! -f ${shipid} ]; then
-		echo "invalid ship id \"${param}\""
+	shipidfile=${varrun}/${param}.ship
+	if [ ! -f ${shipidfile} ]; then
+		echo "ship with id \"${param}\" is not running"
 		exit 1
 	fi
-	. ${shipid}
+	. ${shipidfile}
 fi
 
 case ${cmd} in
@@ -230,7 +232,7 @@ build|create|make)
 		exit 1
 	fi
 	if has_shipid; then
-		echo "ship already exists with id `get_shipid`"
+		echo "ship already exists with id $(get_shipid)"
 		exit 1
 	fi
 
@@ -243,7 +245,7 @@ destroy)
 		echo "ship does not exist"
 		exit 1
 	fi
-	shipid=`get_shipid`
+	shipid=$(get_shipid)
 	if [ -f ${varrun}/${shipid}.ship ]; then
 		echo "ship is running with id ${shipid}, not destroying"
 		exit 1
@@ -278,11 +280,11 @@ start|stop|status)
 	start)
 		mounts mount
 
-		shipid=`${cat} ${shippath}/shipid`
-		varfile=${varrun}/${shipid}.ship
-		echo "id=${shipid}" > ${varfile}
-		echo "cf=${param}" >> ${varfile}
-		${cat} ${param} >> ${varfile}
+		shipid=$(get_shipid)
+		shipidfile=${varrun}/${shipid}.ship
+		echo "shipid=${shipid}" > ${shipidfile}
+		echo "conf=${param}" >> ${shipidfile}
+		${cat} ${param} >> ${shipidfile}
 		# start user commands after the service is started
 		ipupdown up
 		at_cmd_run start ${param}
@@ -290,10 +292,12 @@ start|stop|status)
 	stop)
 		ipupdown down
 		mounts umount
-		varfile=${varrun}/${param}.ship
 		# start user commands after the service is stopped
-		at_cmd_run stop ${varfile}
-		${rm} ${varfile}
+		at_cmd_run stop ${shipidfile}
+		${rm} ${shipidfile}
+		;;
+	status)
+		at_cmd_run status ${shipidfile}
 		;;
 	esac
 	;;
@@ -303,7 +307,7 @@ ls)
 		[ ! -f "${f}" ] && exit 0
 		. ${f}
 		. ${cf}
-		echo "${id} - ${shipname} - ${cf}"
+		echo "${shipid} - ${shipname} - ${conf}"
 	done
 	;;
 rcd)
