@@ -118,8 +118,7 @@ build()
 
 	${pkgin} -y -c ${shippath} update
 
-	# install wanted packages
-	pkg_reqs_done="${packages}"
+	pkg_reqs_done=""
 	for pkg in ${packages}
 	do
 		# retrieve dependencies names

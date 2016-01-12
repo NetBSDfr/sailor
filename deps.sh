@@ -57,7 +57,8 @@ pkg_requires()
 {
 	reqs=""
 	pkg=${1%-[0-9]*}
-	for req in `${pkgin} pbd ${pkg}|${awk} -F= '/^REQUIRES=/ { print $2 }'`
+	targets="$(${pkgin} pbd ${pkg}|${awk} -F= '/^REQUIRES=/ { print $2 }')"
+	for req in ${targets}
 	do
 		[ -e ${req} ] && reqs="${reqs} ${req}"
 	done
