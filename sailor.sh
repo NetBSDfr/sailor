@@ -7,6 +7,7 @@ usage()
 	echo "       $0 stop <ship id>"
 	echo "       $0 status <ship id>"
 	echo "       $0 destroy <ship.conf>"
+	echo "       $0 run <ship id> <command> ..."
 	echo "       $0 rcd <package>"
 	echo "       $0 ls"
 	exit 1
@@ -173,7 +174,7 @@ get_shipid()
 	has_shipid && ${cat} ${shippath}/shipid
 }
 
-cmd_run()
+at_cmd_run()
 {
 	cmd=${1}; file=${2}
 	${grep} "^run_at_${cmd}" ${file}|while read line
@@ -181,6 +182,11 @@ cmd_run()
 		eval ${line}
 		eval chroot ${shippath} ${sh} -c \"\$run_at_${cmd}\"
 	done
+}
+
+sh_cmd_run()
+{
+	chroot ${shippath} $@
 }
 
 rc_d_name()
@@ -207,6 +213,16 @@ rc_d_name()
 	rm -rf ${tempdir}
 }
 
+# parameter is a ship id, source it
+if [ ! -f ${param} ]; then
+	shipid=${varrun}/${param}.ship
+	if [ ! -f ${shipid} ]; then
+		echo "invalid ship id \"${param}\""
+		exit 1
+	fi
+	. ${shipid}
+fi
+
 case ${cmd} in
 build|create|make)
 	if [ -z "${shippath}" -o "${shippath}" = "/" ]; then
@@ -220,7 +236,7 @@ build|create|make)
 
 	build
 	# run user commands after the jail is built
-	cmd_run build ${param}
+	at_cmd_run build ${param}
 	;;
 destroy)
 	if ! has_shipid; then
@@ -237,7 +253,7 @@ destroy)
 	case ${reply} in
 	y|yes)
 		# run user commands before removing data
-		cmd_run destroy ${param}
+		at_cmd_run destroy ${param}
 		${rm} -rf ${shippath}
 		;;
 	*)
@@ -246,16 +262,7 @@ destroy)
 	esac
 	;;
 start|stop|status)
-	# parameter is a ship id
-	if [ ! -f ${param} ]; then
-		shipid=${varrun}/${param}.ship
-		if [ ! -f ${shipid} ]; then
-			echo "invalid ship id \"${param}\""
-			exit 1
-		fi
-		. ${shipid}
-	# parameter is a ship conf file
-	elif [ "${cmd}" != "start" ]; then
+	if [ "${cmd}" != "start" -a -z "${shipid}" ]; then
 		echo "please use ship id $(${cat} ${shippath}/shipid)"
 		exit 1
 	fi
@@ -278,14 +285,14 @@ start|stop|status)
 		${cat} ${param} >> ${varfile}
 		# start user commands after the service is started
 		ipupdown up
-		cmd_run start ${param}
+		at_cmd_run start ${param}
 		;;
 	stop)
 		ipupdown down
 		mounts umount
 		varfile=${varrun}/${param}.ship
 		# start user commands after the service is stopped
-		cmd_run stop ${varfile}
+		at_cmd_run stop ${varfile}
 		${rm} ${varfile}
 		;;
 	esac
@@ -300,7 +307,11 @@ ls)
 	done
 	;;
 rcd)
-	rc_d_name ${2}
+	rc_d_name ${param}
+	;;
+run)
+	shift; shift # remove command and ship id
+	sh_cmd_run $@
 	;;
 *)
 	usage
