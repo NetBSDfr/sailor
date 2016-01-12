@@ -159,6 +159,10 @@ $ curl http://localhost:1080/
 Hello from inside the chroot!
 ```
 
+In this example, an [nginx][3] server is configured to act as a reverse proxy
+to a `nodejs` small web app. The application is started by the [pm2][7] process
+manager and listens on port 8080. This setup is based on [this great
+documentation][8] and automatize all the steps described.
 `node` source code can be found in `nginxphp/var/node` which you can `chown` to
 your own user and populate with the `node` code you want.
 
@@ -170,3 +174,5 @@ your own user and populate with the `node` code you want.
 [4]: http://php.net/manual/en/install.fpm.php
 [5]: http://saveosx.org/download-and-install/
 [6]: https://nodejs.org/en/
+[7]: http://pm2.keymetrics.io/
+[8]: https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-14-04
