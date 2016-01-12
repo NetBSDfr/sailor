@@ -163,6 +163,7 @@ In this example, an [nginx][3] server is configured to act as a reverse proxy
 to a `nodejs` small web app. The application is started by the [pm2][7] process
 manager and listens on port 8080. This setup is based on [this great
 documentation][8] and automatize all the steps described.
+
 `node` source code can be found in `nginxphp/var/node` which you can `chown` to
 your own user and populate with the `node` code you want.
 
