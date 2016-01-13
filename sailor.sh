@@ -239,6 +239,8 @@ build|create|make)
 	fi
 
 	build
+
+	mounts mount
 	# run user commands after the jail is built
 	at_cmd_run build ${param}
 	;;
@@ -259,6 +261,7 @@ destroy)
 		# run user commands before removing data
 		at_cmd_run destroy ${param}
 		dns del
+		mounts umount
 		${rm} -rf ${shippath}
 		;;
 	*)
@@ -281,8 +284,6 @@ start|stop|status)
 	done
 	case ${cmd} in
 	start)
-		mounts mount
-
 		shipid=$(get_shipid)
 		shipidfile=${varrun}/${shipid}.ship
 		echo "shipid=${shipid}" > ${shipidfile}
@@ -295,7 +296,6 @@ start|stop|status)
 		;;
 	stop)
 		ipupdown down
-		mounts umount
 		# start user commands after the service is stopped
 		at_cmd_run stop ${shipidfile}
 		${rm} ${shipidfile}

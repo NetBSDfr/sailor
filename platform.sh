@@ -15,6 +15,7 @@ rm="`which rm` -f"
 ls=`which ls`
 od=`which od`
 tr=`which tr`
+mount=`which mount`
 umount=`which umount`
 curl=`which curl`
 ifconfig=`which ifconfig`
@@ -48,7 +49,16 @@ Darwin)
 		true
 	}
 	mounts() {
-		true
+		mcmd=${1}
+
+		case ${mcmd} in
+		mount)
+			${mount} -t devfs devfs ${shippath}/dev
+			;;
+		umount)
+			${umount} ${shippath}/dev
+			;;
+		esac
 	}
 	iflist() {
 		${ifconfig} -l
