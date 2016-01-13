@@ -54,8 +54,7 @@ Darwin)
 		${ifconfig} -l
 	}
 	dns() {
-		action=${1}; shippath=${2}
-		mdns ${action}
+		mdns ${1}
 	}
 
 	readlink=`which readlink`
