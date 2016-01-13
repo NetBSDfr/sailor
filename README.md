@@ -12,6 +12,10 @@ run a service.
 **For now** _NetBSD_ and _Darwin / Mac OS X_ are the primary targets of this
 project.
 
+## demo
+
+![gif](http://imil.net/stuff/sailor.gif)
+
 ## requirements
 
 `sailor` needs the following third party tools:
