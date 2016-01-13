@@ -92,6 +92,8 @@ build()
 	${mkdir} ${shippath}/etc
 	${cp} /usr/share/zoneinfo/GMT ${shippath}/etc/localtime
 	${cp} /etc/resolv.conf ${shippath}/etc/
+	# custom DNS (mDNSresponder for OSX)
+	dns add
 	# custom /etc
 	common="ships/common"
 	# populate commons
@@ -256,6 +258,7 @@ destroy)
 	y|yes)
 		# run user commands before removing data
 		at_cmd_run destroy ${param}
+		dns del
 		${rm} -rf ${shippath}
 		;;
 	*)
@@ -288,6 +291,7 @@ start|stop|status)
 		# start user commands after the service is started
 		ipupdown up
 		at_cmd_run start ${param}
+		echo "ship id: ${shipid}"
 		;;
 	stop)
 		ipupdown down
