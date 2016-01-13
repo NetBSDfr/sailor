@@ -260,7 +260,9 @@ destroy)
 	y|yes)
 		# run user commands before removing data
 		at_cmd_run destroy ${param}
+		# remove mDNS entry (OSX)
 		dns del
+		# umount loopbacks and devfs
 		mounts umount
 		${rm} -rf ${shippath}
 		;;
