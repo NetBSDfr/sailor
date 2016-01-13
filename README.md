@@ -112,6 +112,10 @@ _optional_
 
 ## real life examples
 
+In these examples, we will use the `sudo -E` command to run `sailor` with `root`
+privileges but still keeping environment variables so the `${HOME}` variable
+in the `ship` configuration file is evaluated as our user's home directory.
+
 #### Fire up a fully working and isolated [nginx][3] + [php-fpm][4] stack
 
 [Download and install Save OS X][5] if running Mac OS X

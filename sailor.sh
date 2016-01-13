@@ -264,6 +264,7 @@ destroy)
 		dns del
 		# umount loopbacks and devfs
 		mounts umount
+		# delete the ship
 		${rm} -rf ${shippath}
 		;;
 	*)
