@@ -5,6 +5,8 @@
 **WARNING** this project is still under heavy development, use it at your own
 risk
 
+**DANGER** BROKEN ON OSX FOR NOW
+
 `sailor` is based on [chroot][0] and [pkgin][1], it will create a `chrooted`
 environment containing _only_ the needed pieces in order to install and  / or
 run a service.
