@@ -310,7 +310,7 @@ ls)
 	do
 		[ ! -f "${f}" ] && exit 0
 		. ${f}
-		. ${cf}
+		. ${conf}
 		echo "${shipid} - ${shipname} - ${conf}"
 	done
 	;;
