@@ -64,7 +64,7 @@ mdns()
 		;;
 	del)
 		i=$(getent_id ${shippath} ${PLIST})
-		[ -n "${i}" ] &&
+		[ -n "${i}" ] && \
 			${PB} -c "Delete Sockets:Listeners:${i}" ${PLIST}
 		;;
 	esac
