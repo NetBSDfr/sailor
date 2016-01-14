@@ -26,6 +26,7 @@ if [ "`${id} -u`" != "0" ]; then
 	exit 1
 fi
 
+# parameter is a file, source it
 if [ -f "${param}" ]; then
 	param="`dirname ${param}`/`basename ${param}`"
 	. ${param}
