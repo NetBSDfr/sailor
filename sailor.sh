@@ -1,5 +1,7 @@
 #!/bin/sh
 
+include=include
+
 usage()
 {
 	echo "usage: $0 build <ship.conf>"
@@ -18,8 +20,8 @@ usage()
 cmd=${1}
 param=${2}
 
-. include/platform.sh
-. include/deps.sh
+. ${include}/platform.sh
+. ${include}/deps.sh
 
 if [ "`${id} -u`" != "0" ]; then
 	echo "please run $0 with UID 0"
