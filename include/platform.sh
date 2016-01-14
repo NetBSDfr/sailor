@@ -40,7 +40,7 @@ rsync="${rsync} -av"
 
 case $OS in
 Darwin)
-	. ./include/mdns.sh
+	. ${include}/mdns.sh
 
 	p_ldd() {
 		/usr/bin/otool -L ${1}|${awk} '/\/[lL]ib.+\(/ {print $1}'
