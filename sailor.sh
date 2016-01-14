@@ -18,8 +18,8 @@ usage()
 cmd=${1}
 param=${2}
 
-. ./platform.sh
-. ./deps.sh
+. include/platform.sh
+. include/deps.sh
 
 if [ "`${id} -u`" != "0" ]; then
 	echo "please run $0 with UID 0"
