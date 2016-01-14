@@ -181,6 +181,24 @@ documentation][8] and automatize all the steps described.
 `node` source code can be found in `nginxphp/var/node` which you can `chown` to
 your own user and populate with the `node` code you want.
 
+#### Others examples
+
+A couple of other examples are available in the `examples` directory:
+
+* `namp.conf`
+
+  A basic `apache` / `MySQL` / `PHP` stack
+
+* `nginx.conf`
+
+  A simple `nginx` server
+
+* `nginxflaskapi.conf`
+
+  A full `nginx` / `python` / `Flask` / `gunicorn` stack running [Flask-API][9]
+  to provide an easily programmable `REST` interface.
+
+Probably more to come...
 
 [0]: https://en.wikipedia.org/wiki/Chroot
 [1]: http://pkgin.net
@@ -191,3 +209,4 @@ your own user and populate with the `node` code you want.
 [6]: https://nodejs.org/en/
 [7]: http://pm2.keymetrics.io/
 [8]: https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-14-04
+[9]: http://www.flaskapi.org/
