@@ -144,6 +144,9 @@ build()
 		done
 	done
 
+	# mounts might be needed at build for software installation
+	mounts mount
+
 	if [ ! -z "${packages}" ]; then
 		PKG_RCD_SCRIPTS=yes ${pkgin} -y -c ${shippath} in ${packages}
 		${pkgin} -y clean
@@ -284,8 +287,6 @@ build|create|make)
 
 	build
 
-	# mounts might be needed at build for software installation
-	mounts mount
 	# run user commands after the jail is built
 	at_cmd_run build ${param}
 	# umount devfs and loopback mounts
