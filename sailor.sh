@@ -176,6 +176,23 @@ has_shipid()
 	[ -f ${shippath}/shipid ] && return 0 || return 1
 }
 
+has_shipidfile()
+{
+	if [ ! -f ${shipidfile} ]; then
+		echo "ship ${shipid} is not running"
+		exit 1
+	fi
+	. ${shipidfile}
+}
+
+provide_conf_file()
+{
+	if [ ! -f "${1}" ]; then
+		echo "please provide ship configuration file"
+		exit 1
+	fi
+}
+
 get_shipid()
 {
 	has_shipid && ${cat} ${shippath}/shipid
@@ -277,6 +294,7 @@ build|create|make)
 	dns del
 	;;
 destroy)
+	provide_conf_file
 	if [ -z "${shipid}" ]; then
 		echo "ship does not exist or is incomplete"
 		exit 1
@@ -307,10 +325,7 @@ start|stop|status)
 
 	case ${cmd} in
 	start)
-		if [ ! -f "${param}" ]; then
-			echo "please provide ship configuration path"
-			exit 1
-		fi
+		provide_conf_file
 		if [ -n "${shipidfile}" -a -f "${shipidfile}" ]; then
 			echo "ship ${shipid} is already started"
 			exit 1
@@ -336,11 +351,7 @@ start|stop|status)
 		echo "ship id: ${shipid}"
 		;;
 	stop)
-		if [ ! -f ${shipidfile} ]; then
-			echo "ship ${shipid} is not running"
-			exit 1
-		fi
-		. ${shipidfile}
+		has_shipidfile
 		# execute rc.d scripts if any
 		rc_d_cmd ${cmd}
 		# shutdown ip aliases if any
@@ -354,10 +365,10 @@ start|stop|status)
 		${rm} ${shipidfile}
 		;;
 	status)
-		 [ -f ${shipidfile} ] && . ${shipidfile}
+		has_shipidfile
 		# execute rc.d scripts if any
 		rc_d_cmd ${cmd}
-		[ -f ${shipidfile} ] && at_cmd_run status ${shipidfile}
+		at_cmd_run status ${shipidfile}
 		;;
 	esac
 	;;
