@@ -49,7 +49,9 @@ Starting nginx.
 
 ```
 # ./sailor.sh ls
-4ecd1896d35a66c7 - nginx - /home/imil/src/sailor/nginx.conf
+ID                 | name            | configuration file        | uptime    
+--------------------------------------------------------------------------------
+4ecd1896d35a66c7   | nginx           | examples/nginx.conf       | 00:01:05  
 ```
 
 * Stop a ship
