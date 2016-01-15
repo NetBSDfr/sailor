@@ -28,10 +28,10 @@ if [ "`${id} -u`" != "0" ]; then
 	exit 1
 fi
 
-# parameter is a file, source it
-if [ -f "${param}" ]; then
+if [ -e "${param}" ]; then
 	param="`dirname ${param}`/`basename ${param}`"
-	. ${param}
+	# parameter is a file, source it
+	[ -f ${param} ] && . ${param}
 fi
 
 reqs=""
@@ -220,15 +220,25 @@ rc_d_name()
 }
 
 shipidfile=""
-# parameter is a ship id, source it
-if [ ! -f ${param} ]; then
+# parameter is not a file
+# is it a directory? if yes, must be a shippath
+if [ -d ${param} ]; then
+	shippath=${param}
+# must be a shipid then
+elif [ ! -f ${param} ]; then
 	shipidfile=${varrun}/${param}.ship
 	if [ ! -f ${shipidfile} ]; then
-		echo "ship with id \"${param}\" is not running"
+		echo "\"${param}\": invalid id or file"
 		exit 1
 	fi
 	. ${shipidfile}
 fi
+
+# no shipid recorded yet, have we got one in shippath?
+[ -z ${shipid} ] && has_shipid && shipid=$(get_shipid)
+# shipid exists, build a shipfileid path
+[ -n "${shipid}" -a -z "${shipidfile}" ] && \
+	shipidfile="${varrun}/${shipid}.ship"
 
 case ${cmd} in
 build|create|make)
@@ -236,8 +246,8 @@ build|create|make)
 		echo "ABORTING: \"\$shippath\" set to \"$shippath\""
 		exit 1
 	fi
-	if has_shipid; then
-		echo "ship already exists with id $(get_shipid)"
+	if [ -n "${shipid}" ]; then
+		echo "ship already exists with id ${shipid}"
 		exit 1
 	fi
 
@@ -248,12 +258,11 @@ build|create|make)
 	at_cmd_run build ${param}
 	;;
 destroy)
-	if ! has_shipid; then
-		echo "ship does not exist"
+	if [ -z "${shipid}" ]; then
+		echo "ship does not exist or is incomplete"
 		exit 1
 	fi
-	shipid=$(get_shipid)
-	if [ -f ${varrun}/${shipid}.ship ]; then
+	if [ -f ${shipidfile} ]; then
 		echo "ship is running with id ${shipid}, not destroying"
 		exit 1
 	fi
@@ -268,7 +277,7 @@ destroy)
 		# umount loopbacks and devfs
 		mounts umount
 		# delete the ship
-		${rm} -rf ${shippath}
+		[ "${shippath}" != "/" ] && ${rm} -rf ${shippath}
 		;;
 	*)
 		exit 0
@@ -277,7 +286,7 @@ destroy)
 	;;
 start|stop|status)
 	if [ "${cmd}" != "start" -a -z "${shipid}" ]; then
-		echo "please use ship id $(${cat} ${shippath}/shipid)"
+		echo "please use ship id ${shipid}"
 		exit 1
 	fi
 
@@ -290,8 +299,14 @@ start|stop|status)
 	done
 	case ${cmd} in
 	start)
-		shipid=$(get_shipid)
-		shipidfile=${varrun}/${shipid}.ship
+		if [ ! -f ${param} ]; then
+			echo "please provide ship configuration path"
+			exit 1
+		fi
+		if [ -f ${shipidfile} ]; then
+			echo "ship ${shipid} is already started"
+			exit 1
+		fi
 		echo "shipid=${shipid}" > ${shipidfile}
 		echo "conf=${param}" >> ${shipidfile}
 		${cat} ${param} >> ${shipidfile}
@@ -301,13 +316,17 @@ start|stop|status)
 		echo "ship id: ${shipid}"
 		;;
 	stop)
+		if [ ! -f ${shipidfile} ]; then
+			echo "ship ${shipid} is not running"
+			exit 1
+		fi
 		ipupdown down
 		# start user commands after the service is stopped
 		at_cmd_run stop ${shipidfile}
 		${rm} ${shipidfile}
 		;;
 	status)
-		at_cmd_run status ${shipidfile}
+		[ -f ${shipidfile} ] && at_cmd_run status ${shipidfile}
 		;;
 	esac
 	;;
