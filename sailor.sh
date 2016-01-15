@@ -10,6 +10,7 @@ usage()
 	echo "       $0 status <ship id>"
 	echo "       $0 destroy <ship.conf>"
 	echo "       $0 run <ship id> <command> ..."
+	echo "       $0 enter <ship id>"
 	echo "       $0 rcd <package>"
 	echo "       $0 ls"
 	exit 1
@@ -337,7 +338,7 @@ start|stop|status)
 ls)
 	format="%-18s | %-20s | %s\n"
 	printf "${format}" "ID" "name" "configuration file"
-	printf "%$(tput cols)s"|tr ' ' '-'
+	printf "%$(tput cols)s\n"|tr ' ' '-'
 	for f in ${varrun}/*.ship
 	do
 		[ ! -f "${f}" ] && exit 0
@@ -352,6 +353,13 @@ rcd)
 run)
 	shift; shift # remove command and ship id
 	sh_cmd_run $@
+	;;
+enter)
+	if [ ! -f ${shipidfile} ]; then
+		echo "ship is not started, can't enter"
+		exit 1
+	fi
+	chroot ${shippath} ${sh}
 	;;
 *)
 	usage
