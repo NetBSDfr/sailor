@@ -294,7 +294,7 @@ build|create|make)
 	dns del
 	;;
 destroy)
-	provide_conf_file
+	provide_conf_file ${param}
 	if [ -z "${shipid}" ]; then
 		echo "ship does not exist or is incomplete"
 		exit 1
@@ -325,7 +325,7 @@ start|stop|status)
 
 	case ${cmd} in
 	start)
-		provide_conf_file
+		provide_conf_file ${param}
 		if [ -n "${shipidfile}" -a -f "${shipidfile}" ]; then
 			echo "ship ${shipid} is already started"
 			exit 1
