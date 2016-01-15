@@ -338,9 +338,14 @@ start|stop|status)
 	esac
 	;;
 ls)
-	format="%-18s | %-15s | %-25s | %-10s\n"
+	cols=${COLUMNS:-$(tput cols)}
+	col1=$(($((${cols} * 23)) / 100))
+	col2=$(($((${cols} * 22)) / 100))
+	col3=$(($((${cols} * 30)) / 100))
+	col4=$(($((${cols} * 10)) / 100))
+	format="%-${col1}s | %-${col2}s | %-${col3}s | %-${col4}s\n"
 	printf "${format}" "ID" "name" "configuration file" "uptime"
-	printf "%$(tput cols)s\n"|tr ' ' '-'
+	printf "%${cols}s\n"|tr ' ' '-'
 	for f in ${varrun}/*.ship
 	do
 		[ ! -f "${f}" ] && exit 0
@@ -348,6 +353,7 @@ ls)
 		. ${conf}
 		now=$(date +%s)
 		up=$(epoch_to_hms $((${now} - ${starttime})))
+		conf=$(basename ${conf})
 		printf "${format}" "${shipid}" "${shipname}" "${conf}" "${up}"
 	done
 	;;
