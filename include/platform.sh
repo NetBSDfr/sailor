@@ -117,11 +117,27 @@ NetBSD)
 	def_bins="/libexec/ld.elf_so /usr/libexec/ld.elf_so"
 	loopmount="/sbin/mount -t null"
 	;;
+Linux)
+	p_ldd() {
+		/usr/bin/ldd ${1}|${grep} -oE '/lib[^[:space:]]+'
+	}
+	mkdevs() {
+		true
+	}
+	mounts() {
+		true
+	}
+	iflist() {
+		ls -1 /sys/class/net|xargs
+	}
+	readlink="`which readlink` -f"
+	def_bins="/lib/ld-linux.so.2 /lib64/ld-linux-x86-64.so.2"
+	;;
 esac
 
 # binaries needed by many packages and not listed in +INSTALL
 # most installation and startup scripts also need /bin/sh
-def_bins="${def_bins} /usr/sbin/pwd_mkdb ${useradd} ${groupadd} \
-	${pkg_info} ${pkgin} /bin/sh /bin/test /sbin/nologin /bin/echo \
+def_bins="${def_bins} `which pwd_mkdb` ${useradd} ${groupadd} \
+	${pkg_info} ${pkgin} /bin/sh /bin/test `which nologin` /bin/echo \
 	/bin/ps /bin/sleep `which sysctl` `which logger` `which kill` \
 	`which printf` /bin/sh"
