@@ -299,12 +299,16 @@ start|stop|status)
 	done
 	case ${cmd} in
 	start)
-		if [ ! -f ${param} ]; then
+		if [ ! -f "${param}" ]; then
 			echo "please provide ship configuration path"
 			exit 1
 		fi
-		if [ -f ${shipidfile} ]; then
+		if [ -n "${shipidfile}" -a -f "${shipidfile}" ]; then
 			echo "ship ${shipid} is already started"
+			exit 1
+		fi
+		if [ -z "${shipid}" ]; then
+			echo "nonexistent ship"
 			exit 1
 		fi
 		echo "shipid=${shipid}" > ${shipidfile}
@@ -331,12 +335,15 @@ start|stop|status)
 	esac
 	;;
 ls)
+	format="%-18s | %-20s | %s\n"
+	printf "${format}" "ID" "name" "configuration file"
+	printf "%$(tput cols)s"|tr ' ' '-'
 	for f in ${varrun}/*.ship
 	do
 		[ ! -f "${f}" ] && exit 0
 		. ${f}
 		. ${conf}
-		echo "${shipid} - ${shipname} - ${conf}"
+		printf "${format}" "${shipid}" "${shipname}" "${conf}"
 	done
 	;;
 rcd)
