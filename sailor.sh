@@ -221,6 +221,18 @@ rc_d_name()
 	rm -rf ${tempdir}
 }
 
+rc_d_cmd()
+{
+	cmd=${1}
+
+	has_services && for s in ${services}
+	do
+		if ! chroot ${shippath} /etc/rc.d/${s} ${cmd}; then
+			echo "error while chrooting to ${shippath}"
+		fi
+	done
+}
+
 shipidfile=""
 # parameter is not a file
 # is it a directory? if yes, must be a shippath
@@ -255,9 +267,14 @@ build|create|make)
 
 	build
 
+	# mounts might be needed at build for software installation
 	mounts mount
 	# run user commands after the jail is built
 	at_cmd_run build ${param}
+	# umount devfs and loopback mounts
+	mounts umount
+	# remove mDNS (OSX)
+	dns del
 	;;
 destroy)
 	if [ -z "${shipid}" ]; then
@@ -274,10 +291,6 @@ destroy)
 	y|yes)
 		# run user commands before removing data
 		at_cmd_run destroy ${param}
-		# remove mDNS entry (OSX)
-		dns del
-		# umount loopbacks and devfs
-		mounts umount
 		# delete the ship
 		[ "${shippath}" != "/" ] && ${rm} -rf ${shippath}
 		;;
@@ -292,13 +305,6 @@ start|stop|status)
 		exit 1
 	fi
 
-	has_services && for s in ${services}
-	do
-		if ! chroot ${shippath} /etc/rc.d/${s} ${cmd}; then
-			echo "error while chrooting to ${shippath}"
-			exit 1
-		fi
-	done
 	case ${cmd} in
 	start)
 		if [ ! -f "${param}" ]; then
@@ -319,6 +325,13 @@ start|stop|status)
 		${cat} ${param} >> ${shipidfile}
 		# start user commands after the service is started
 		ipupdown up
+		# add mDNS entry (OSX)
+		dns add
+		# mount loopbacks and devfs
+		mounts mount
+		# execute rc.d scripts if any
+		rc_d_cmd ${cmd}
+		# start custom run_at_start commands
 		at_cmd_run start ${param}
 		echo "ship id: ${shipid}"
 		;;
@@ -327,12 +340,23 @@ start|stop|status)
 			echo "ship ${shipid} is not running"
 			exit 1
 		fi
+		. ${shipidfile}
+		# execute rc.d scripts if any
+		rc_d_cmd ${cmd}
+		# shutdown ip aliases if any
 		ipupdown down
 		# start user commands after the service is stopped
 		at_cmd_run stop ${shipidfile}
+		# remove mDNS entry (OSX)
+		dns del
+		# umount loopbacks and devfs
+		mounts umount
 		${rm} ${shipidfile}
 		;;
 	status)
+		 [ -f ${shipidfile} ] && . ${shipidfile}
+		# execute rc.d scripts if any
+		rc_d_cmd ${cmd}
 		[ -f ${shipidfile} ] && at_cmd_run status ${shipidfile}
 		;;
 	esac

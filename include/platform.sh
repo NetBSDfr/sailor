@@ -26,7 +26,7 @@ useradd=`which useradd`
 groupadd=`which groupadd`
 
 # needed 3rd party programs
-for bin in pkg_info pkg_tarup pkgin rsync curl pax
+for bin in pkg_info pkg_tarup pkgin rsync curl
 do
 	binpath=`which ${bin}`
 	if [ -z "${binpath}" ]; then
