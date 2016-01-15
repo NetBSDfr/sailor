@@ -382,12 +382,12 @@ ls)
 	format="%-${col1}s | %-${col2}s | %-${col3}s | %-${col4}s\n"
 	printf "${format}" "ID" "name" "configuration file" "uptime"
 	printf "%${cols}s\n"|tr ' ' '-'
+	now=$(date +%s)
 	for f in ${varrun}/*.ship
 	do
 		[ ! -f "${f}" ] && exit 0
 		. ${f}
 		. ${conf}
-		now=$(date +%s)
 		up=$(epoch_to_hms $((${now} - ${starttime})))
 		conf=$(basename ${conf})
 		printf "${format}" "${shipid}" "${shipname}" "${conf}" "${up}"
