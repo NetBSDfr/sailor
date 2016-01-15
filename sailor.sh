@@ -23,6 +23,7 @@ param=${2}
 
 . ${include}/platform.sh
 . ${include}/deps.sh
+. ${include}/helpers.sh
 
 if [ "`${id} -u`" != "0" ]; then
 	echo "please run $0 with UID 0"
@@ -314,6 +315,7 @@ start|stop|status)
 		fi
 		echo "shipid=${shipid}" > ${shipidfile}
 		echo "conf=${param}" >> ${shipidfile}
+		echo "starttime=$(date +%s)" >> ${shipidfile}
 		${cat} ${param} >> ${shipidfile}
 		# start user commands after the service is started
 		ipupdown up
@@ -336,15 +338,17 @@ start|stop|status)
 	esac
 	;;
 ls)
-	format="%-18s | %-20s | %s\n"
-	printf "${format}" "ID" "name" "configuration file"
+	format="%-18s | %-15s | %-25s | %-10s\n"
+	printf "${format}" "ID" "name" "configuration file" "uptime"
 	printf "%$(tput cols)s\n"|tr ' ' '-'
 	for f in ${varrun}/*.ship
 	do
 		[ ! -f "${f}" ] && exit 0
 		. ${f}
 		. ${conf}
-		printf "${format}" "${shipid}" "${shipname}" "${conf}"
+		now=$(date +%s)
+		up=$(epoch_to_hms $((${now} - ${starttime})))
+		printf "${format}" "${shipid}" "${shipname}" "${conf}" "${up}"
 	done
 	;;
 rcd)

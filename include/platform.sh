@@ -26,7 +26,7 @@ useradd=`which useradd`
 groupadd=`which groupadd`
 
 # needed 3rd party programs
-for bin in pkg_info pkg_tarup pkgin rsync curl
+for bin in pkg_info pkg_tarup pkgin rsync curl pax
 do
 	binpath=`which ${bin}`
 	if [ -z "${binpath}" ]; then
@@ -118,6 +118,7 @@ NetBSD)
 	loopmount="/sbin/mount -t null"
 	;;
 Linux)
+	# Linux is on the works right now
 	p_ldd() {
 		/usr/bin/ldd ${1}|${grep} -oE '/lib[^[:space:]]+'
 	}
