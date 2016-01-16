@@ -401,10 +401,8 @@ run)
 	sh_cmd_run $@
 	;;
 enter)
-	if [ ! -f ${shipidfile} ]; then
-		echo "ship is not started, can't enter"
-		exit 1
-	fi
+	has_shipidfile
+
 	chroot ${shippath} ${sh}
 	;;
 *)
