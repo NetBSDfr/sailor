@@ -21,6 +21,7 @@ usage()
 cmd=${1}
 param=${2}
 
+. ${include}/define.sh
 . ${include}/platform.sh
 . ${include}/deps.sh
 . ${include}/helpers.sh
@@ -374,11 +375,6 @@ start|stop|status)
 	esac
 	;;
 ls)
-	cols=${COLUMNS:-$(tput cols)}
-	col1=$(($((${cols} * 23)) / 100))
-	col2=$(($((${cols} * 22)) / 100))
-	col3=$(($((${cols} * 30)) / 100))
-	col4=$(($((${cols} * 10)) / 100))
 	format="%-${col1}s | %-${col2}s | %-${col3}s | %-${col4}s\n"
 	printf "${format}" "ID" "name" "configuration file" "uptime"
 	printf "%${cols}s\n"|tr ' ' '-'

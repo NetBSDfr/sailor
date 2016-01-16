@@ -1,29 +1,4 @@
-cat=`which cat`
-sh=`which sh`
-id=`which id`
-pax="${debug}`which pax` -rwpe"
-cp=`${debug}which cp`
-chown=`which chown`
-chmod=`which chmod`
-awk=`which awk`
-sort=`which sort`
-grep=`which grep`
-tar=`which tar`
-mkdir="`which mkdir` -p"
-touch=`which touch`
-rm="`which rm` -f"
-ls=`which ls`
-od=`which od`
-tr=`which tr`
-mount=`which mount`
-umount=`which umount`
-curl=`which curl`
-ifconfig=`which ifconfig`
-OS=`uname -s`
-
-# pkg_install additional tools
-useradd=`which useradd`
-groupadd=`which groupadd`
+# platform specific variables and functions
 
 # needed 3rd party programs
 for bin in pkg_info pkg_tarup pkgin rsync curl
