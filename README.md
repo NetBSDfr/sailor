@@ -12,6 +12,11 @@ run a service.
 **For now** _NetBSD_ and _Darwin / Mac OS X_ are the primary targets of this
 project.
 
+Note that `sailor`'s goal is **not** to provide bullet-proof security, `chroot`
+is definitely not a trustable isolator; instead, `sailor` is a really
+convenient way of trying / testing an evironment without compromising your
+workstation filesystem.
+
 ## demo
 
 ![gif](http://imil.net/stuff/sailor.gif)
