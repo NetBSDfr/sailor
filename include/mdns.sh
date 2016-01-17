@@ -75,7 +75,8 @@ mdns()
 	# wait for name resolution to be ready
 	[ "${action}" = "add" ] && while :
 		do
-			${ping} -c 1 localhost >/dev/null 2>&1
+			chroot ${shippath} \
+				${ping} -c 1 localhost >/dev/null 2>&1
 			[ $? -eq 0 ] && break
 			echo "waiting for resolver..."
 			sleep 1
