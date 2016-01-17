@@ -21,6 +21,7 @@ curl=$(which curl)
 ifconfig=$(which ifconfig)
 useradd=$(which useradd)
 groupadd=$(which groupadd)
+ping=$(which ping)
 OS=$(uname -s)
 
 # columns sizes for ls

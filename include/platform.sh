@@ -31,7 +31,13 @@ Darwin)
 			${mount} -t devfs devfs ${shippath}/dev
 			;;
 		umount)
-			${umount} ${shippath}/dev
+			while :
+			do
+				${umount} ${shippath}/dev >/dev/null 2>&1
+				[ $? -eq 0 ] && break
+				echo "waiting for /dev to be released..."
+				sleep 1
+			done
 			;;
 		esac
 	}
@@ -116,4 +122,4 @@ esac
 def_bins="${def_bins} `which pwd_mkdb` ${useradd} ${groupadd} \
 	${pkg_info} ${pkgin} /bin/sh /bin/test `which nologin` /bin/echo \
 	/bin/ps /bin/sleep `which sysctl` `which logger` `which kill` \
-	`which printf` /bin/sh"
+	`which printf` /bin/sh ${ping}"

@@ -72,4 +72,12 @@ mdns()
 	rm -f ${addlist}
 	${DEBUG} launchctl unload ${PLIST}
 	${DEBUG} launchctl load -w ${PLIST}
+	# wait for name resolution to be ready
+	[ "${action}" = "add" ] && while :
+		do
+			${ping} -c 1 localhost >/dev/null 2>&1
+			[ $? -eq 0 ] && break
+			echo "waiting for resolver..."
+			sleep 1
+		done
 }
