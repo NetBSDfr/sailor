@@ -207,6 +207,17 @@ A couple of other examples are available in the `examples` directory:
 
 Probably more to come...
 
+## greetings
+
+This software has been made possible under Mac OS X thanks to [joyent][10] and
+in particular [Jonathan Perkin][11] who's maintaining OSX [pkgsrc binary
+packages][12].
+
+Thanks to [Youri Mouton and his awesome work on Save OS X][13] which makes
+the use of [pkgin][1] on OSX even simpler.
+
+Finally, thanks to the [NetBSDfr][14] team for their support, tests and patches.
+
 [0]: https://en.wikipedia.org/wiki/Chroot
 [1]: http://pkgin.net
 [2]: http://saveosx.org/
@@ -217,3 +228,8 @@ Probably more to come...
 [7]: http://pm2.keymetrics.io/
 [8]: https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-14-04
 [9]: http://www.flaskapi.org/
+[10]: https://www.joyent.com/
+[11]: https://www.perkin.org.uk/
+[12]: https://pkgsrc.joyent.com/install-on-osx/
+[13]: http://saveosx.org/
+[14]: http://www.NetBSDfr.org/
