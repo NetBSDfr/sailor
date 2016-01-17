@@ -23,6 +23,10 @@ Darwin)
 	mkdevs() {
 		true
 	}
+	dev_mounted() {
+		[ -n "$(${mount}|${grep} ${shippath}/dev)" ] && return 0 || \
+			return 1
+	}
 	mounts() {
 		mcmd=${1}
 
@@ -34,7 +38,7 @@ Darwin)
 			while :
 			do
 				${umount} ${shippath}/dev >/dev/null 2>&1
-				[ $? -eq 0 ] && break
+				[ $? -eq 0  -o ! dev_mounted ] && break
 				echo "waiting for /dev to be released..."
 				sleep 1
 			done
