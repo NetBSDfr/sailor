@@ -24,8 +24,10 @@ Darwin)
 		true
 	}
 	dev_umounted() {
-		[ -z "$(${mount}|${grep} ${shippath}/dev)" ] && return 0 || \
-			return 1
+		if ! ${mount}|${grep} ${shippath}/dev >/dev/null 2>&1; then
+			return 0
+		fi
+		return 1
 	}
 	mounts() {
 		mcmd=${1}
