@@ -38,7 +38,7 @@ Darwin)
 			while :
 			do
 				${umount} ${shippath}/dev >/dev/null 2>&1
-				[ dev_umounted -eq 0 ] && break
+				if dev_umounted; then break; fi
 				echo "waiting for /dev to be released..."
 				sleep 1
 			done
