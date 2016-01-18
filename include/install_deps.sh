@@ -33,16 +33,13 @@ install_pkgin()
 	curl="${curl} --silent --max-time 3 --connect-timeout 2"
 	egrep="${egrep} -o"
 
-	# platform = x86_64 or i386
-	platform="$(uname -m)"
-
 	bootstrap_install_url="https://pkgsrc.joyent.com/install-on-$os/"
 	bootstrap_doc="/tmp/pkgin_install.txt"
 	${curl} -o ${bootstrap_doc} ${bootstrap_install_url}
-	bootstrap_url="$(${cat} ${bootstrap_doc} | ${egrep} -A1 "Download.*bootstrap" | ${egrep} "curl.*$platform.*")"
+	bootstrap_url="$(${cat} ${bootstrap_doc} | ${egrep} -A1 "Download.*bootstrap" | ${egrep} "curl.*$ARCH.*")"
 
 	read bootstrap_hash bootstrap_tar <<EOF
-$(${cat} ${bootstrap_doc} | ${egrep} "[0-9a-z]{32}.+$platform.tar.gz")
+$(${cat} ${bootstrap_doc} | ${egrep} "[0-9a-z]{32}.+$ARCH.tar.gz")
 EOF
 
 	fetch_localbase="$(${curl} ${bootstrap_url#curl -Os} | ${tar} ztvf - | ${egrep} '/.+/pkg_install.conf$')"
@@ -100,28 +97,30 @@ EOF
 	fi
 
 	# Fetch packages.
-	${rm} -rf -- "$pkgin_vardb" "$bootstrap_tmp" "$bootstrap_doc"
-	"$pkgin_path" -y update
+	${rm} -r -- "$PKGIN_VARDB" "$bootstrap_tmp" "$bootstrap_doc"
+	"$pkgin_bin" -y update
 }
 
 test_if_pkgin_is_installed()
 {
 
-    if [ -z ${pkgin} ]; then
-        install_pkgin
-    fi
+	if [ -z ${pkgin} ]; then
+		install_pkgin
+	fi
+
+	return 0
 }
 
 install_3rd_party_pkg()
 {
-    pkg=${1}
-    test_if_pkgin_is_installed
+	pkg=${1}
+	test_if_pkgin_is_installed
 
-    ${pkgin} search ${pkg}
-        if [ "$?" != 0 ]; then
-            printf "Package not found.\n"
-            exit 1
-        else
-            ${pkgin} -y in ${pkg}
-        fi
+	${pkgin} search ${pkg}
+	if [ "$?" != 0 ]; then
+		printf "Package not found.\n"
+		exit 1
+	else
+		${pkgin} -y in ${pkg}
+	fi
 }
