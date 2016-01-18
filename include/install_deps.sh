@@ -30,19 +30,19 @@ install_pkgin()
 		exit 1
 	fi
 
-	curl="${curl} --silent --max-time 3 --connect-timeout 2"
-	egrep="${egrep} -o"
+	_curl="${curl} --silent --max-time 3 --connect-timeout 2"
+	_egrep="${egrep} -o"
 
 	bootstrap_install_url="https://pkgsrc.joyent.com/install-on-$os/"
 	bootstrap_doc="/tmp/pkgin_install.txt"
-	${curl} -o ${bootstrap_doc} ${bootstrap_install_url}
-	bootstrap_url="$(${cat} ${bootstrap_doc} | ${egrep} -A1 "Download.*bootstrap" | ${egrep} "curl.*$ARCH.*")"
+	${_curl} -o ${bootstrap_doc} ${bootstrap_install_url}
+	bootstrap_url="$(${cat} ${bootstrap_doc} | ${_egrep} -A1 "Download.*bootstrap" | ${_egrep} "_curl.*$ARCH.*")"
 
 	read bootstrap_hash bootstrap_tar <<EOF
-$(${cat} ${bootstrap_doc} | ${egrep} "[0-9a-z]{32}.+$ARCH.tar.gz")
+$(${cat} ${bootstrap_doc} | ${_egrep} "[0-9a-z]{32}.+$ARCH.tar.gz")
 EOF
 
-	fetch_localbase="$(${curl} ${bootstrap_url#curl -Os} | ${tar} ztvf - | ${egrep} '/.+/pkg_install.conf$')"
+	fetch_localbase="$(${_curl} ${bootstrap_url#curl -Os} | ${tar} ztvf - | ${_egrep} '/.+/pkg_install.conf$')"
 	pkgin_localbase="${fetch_localbase%/*/*}"
 	pkgin_localbase_bin="$pkgin_localbase/bin"
 	pkgin_localbase_sbin="$pkgin_localbase/sbin"
@@ -76,7 +76,7 @@ EOF
 	repo_gpgkey="0xDE817B8E"
 
 	# download bootstrap kit.
-	${curl} -o "${bootstrap_tmp}" "${bootstrap_url#curl -Os }"
+	${_curl} -o "${bootstrap_tmp}" "${bootstrap_url#curl -Os }"
 	if [ "$?" != 0 ]; then
 		printf "version of bootstrap for $OS not found.\nplease install it by yourself.\n"
 		exit 1
@@ -96,7 +96,7 @@ EOF
 	if [ ! -z ${gpg} ]; then
 		# Verifiy PGP signature.
 		${gpg} --keyserver hkp://keys.gnupg.net --recv-keys $repo_gpgkey >/dev/null 2>&1
-		${curl} -o "${bootstrap_tmp}.asc" "${bootstrap_url#curl -Os }.asc"
+		${_curl} -o "${bootstrap_tmp}.asc" "${bootstrap_url#curl -Os }.asc"
 		${gpg} --verify "${bootstrap_tmp}.asc" >/dev/null 2>&1
 	fi
 
