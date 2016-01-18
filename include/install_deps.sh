@@ -53,23 +53,6 @@ EOF
 
 	[ "$OS" = "Linux" ] && export MANPATH=$pkgin_localbase_man:$manpath
 
-	if echo "$OS" | ${grep} -q "[Dd]arwin" ; then
-
-		if [ ! -f /etc/paths.d/pkgsrc ]; then
-			printf "%s\n%s\n" "$PKGIN_LOCALBASE_BIN" "$PKGIN_LOCALBASE_SBIN" >> /etc/paths.d/pkgsrc
-		fi
-		if [ ! -f /etc/manpaths.d/pkgsrc ]; then
-			printf "MANPATH %s\nMANPATH %s/share/man\n" "$PKGIN_LOCALBASE_MAN" "$PKGIN_LOCALBASE" >> /etc/manpaths.d/pkgsrc
-		fi
-
-		if [ ! $(grep "path_helper" $SHELLRC) ]; then
-			printf "\n# Evaluate system PATH\nif [ -x /usr/libexec/path_helper ]; then\n\teval \"$(/usr/libexec/path_helper -s)\"\nfi\n"
-		fi
-		if [ -x /usr/libexec/path_helper ]; then
-			eval "$(/usr/libexec/path_helper -s)"
-		fi
-	fi
-
 	# Generic variables and commands.
 	bootstrap_tmp="/tmp/${bootstrap_tar}"
 	# Joyent PGPkey
