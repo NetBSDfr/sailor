@@ -60,7 +60,8 @@ bin_requires()
 pkg_requires()
 {
 	reqs=""
-	pkg=${1%-[0-9]*}
+	# pkg=${1%-[0-9]*}
+	pkg=${1}
 	targets="$(${pkgin} pbd ${pkg}|${awk} -F= '/^REQUIRES=/ { print $2 }')"
 	for req in ${targets}
 	do
