@@ -50,8 +50,8 @@ EOF
 	pkgin_bin="$pkgin_localbase_bin/pkgin"
 
 	export PATH=$pkgin_localbase_sbin:$pkgin_localbase_bin:$path
-	# Need to run some test if it's really necessary.
-	export MANPATH=$pkgin_localbase_man:$manpath
+
+	[ "$OS" = "Linux" ] && export MANPATH=$pkgin_localbase_man:$manpath
 
 	if echo "$OS" | ${grep} -q "[Dd]arwin" ; then
 
@@ -76,24 +76,28 @@ EOF
 	repo_gpgkey="0xDE817B8E"
 
 	# download bootstrap kit.
-	${curl} -o "${bootstrap_tmp}" "${bootstrap_url#curl -Os}"
+	${curl} -o "${bootstrap_tmp}" "${bootstrap_url#curl -Os }"
 	if [ "$?" != 0 ]; then
-		printf "version of bootstrap for $os not found.\nplease install it by yourself.\n"
+		printf "version of bootstrap for $OS not found.\nplease install it by yourself.\n"
 		exit 1
 	fi
 
 	# Verify SHA1 checksum of the bootstrap kit.
-	echo "$bootstrap_sha $bootstrap_path" | ${shasum} -a 256 -c - || exit 1
+	bootstrap_sha="$(${shasum} -p $bootstrap_tmp)"
+	if [ ${bootstrap_hash} != ${bootstrap_sha:0:41} ]; then
+		printf "SHA mismatch ! ABOOORT Cap'tain !\n"
+		exit 1
+	fi
 
 	# install bootstrap kit to the right path regarding your distribution.
-	${tar} xfp "$bootstrap_path" -c / >/dev/null 2>&1
+	${tar} xfp "$bootstrap_tmp" -c / >/dev/null 2>&1
 
 	# If GPG available, verify GPG signature.
 	if [ ! -z ${gpg} ]; then
 		# Verifiy PGP signature.
 		${gpg} --keyserver hkp://keys.gnupg.net --recv-keys $repo_gpgkey >/dev/null 2>&1
-		${curl} -s -o "${bootstrap_path}.asc ${bootstrap_url}/${bootstrap_tar}.asc"
-		${gpg} --verify "${bootstrap_path}.asc" >/dev/null 2>&1
+		${curl} -o "${bootstrap_tmp}.asc" "${bootstrap_url#curl -Os }.asc"
+		${gpg} --verify "${bootstrap_tmp}.asc" >/dev/null 2>&1
 	fi
 
 	# Fetch packages.
