@@ -254,6 +254,46 @@ rc_d_cmd()
 	done
 }
 
+export_to_tar()
+{
+	# TODO: Use pax ?
+	shipid=${1}
+	sailor="$0"
+
+	if [ ! -f ${varrun}/${shipid}.ship ]; then
+		echo "Ship must run before the start of the export."
+		exit 1
+	else
+		. ${varrun}/${shipid}.ship
+		printf "Need to stop the ship during the export [y/N]? "
+		read confirm
+		if [ "$confirm" != "y" ] ; then
+			echo "Abort export"
+			exit 1
+		fi
+
+		${sailor} stop ${shipid}
+
+		# TODO: find another location.
+		img="${shippath%/*}/images"
+		[ ! -d ${img} ] && ${mkdir} -p "${img}"
+
+		# TODO: Propose to choose the name of the export image.
+		echo "Exporting $shipid to ${img}/${shipname}-${DDATE}..."
+
+		${tar} czfp "${img}/${shipname}-${DDATE}".tar.gz ${shippath} >/dev/null 2>&1
+
+		# Delete the image if export fails.
+		if [ "$?" != 0 ] && [ -f "${img}/${shipname}-${DDATE}".tar.gz ]; then
+			printf "Export has failed, please retry.\n"
+			${rm} "${img}/${shipname}-${DDATE}".tar.gz
+		fi
+
+		# Restart the ship after the export.
+		${sailor} start ${cf}
+	fi
+}
+
 shipidfile=""
 # parameter is not a file
 # is it a directory? if yes, must be a shippath
