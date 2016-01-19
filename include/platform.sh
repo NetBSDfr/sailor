@@ -3,15 +3,22 @@
 # needed 3rd party programs
 for bin in pkg_info pkg_tarup pkgin rsync curl
 do
-	binpath=`which ${bin}`
+	binpath="$(which ${bin})"
 	if [ -z "${binpath}" ]; then
 		echo "${bin} is required for sailor to work"
+		printf "Would you like to install ${bin}? [y/N] "
+		read confirm
+		if [ "$confirm" = "y" ]; then
+			. ./install_deps.sh
+			install_3rd_party_pkg "${bin}"
+		else
+			echo "${bin} is required for sailor to work"
+			exit 1
+		fi
 		exit 1
 	fi
 	eval ${bin}=${binpath}
 done
-
-rsync="${rsync} -av"
 
 case $OS in
 Darwin)
