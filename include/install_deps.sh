@@ -1,7 +1,5 @@
 #! /usr/bin/env sh
 
-. ${include}/define.sh
-
 case ${OS} in
 	[Dd]arwin)
 		# Try to find a real way to define if another packages manager is installed.
@@ -42,15 +40,16 @@ install_pkgin()
 	${_curl} -o ${bootstrap_doc} ${bootstrap_install_url}
 	bootstrap_url=$(${_egrep} "${joyent_base_url}packages/${OS}/bootstrap/.*.${ARCH}.tar.gz" ${bootstrap_doc})
 
-	read bootstrap_hash bootstrap_tar <<EOF
-$(${_egrep} "[0-9a-z]{32}.+${ARCH}.tar.gz" ${bootstrap_doc})
-EOF
+	read bootstrap_hash bootstrap_tar <<-EOF
+		$(${_egrep} "[0-9a-z]{32}.+${ARCH}.tar.gz" ${bootstrap_doc})
+	EOF
 
 	fetch_localbase="$(${_curl} ${bootstrap_url#curl -Os} | ${tar} ztvf - | ${_egrep} '/.+/pkg_install.conf$')"
 	pkgin_localbase="${fetch_localbase%/*/*}"
-	pkgin_localbase_bin="${pkgin_localbase}/bin"
-	pkgin_localbase_sbin="${pkgin_localbase}/sbin"
-	pkgin_localbase_man="${pkgin_localbase}/man"
+
+	for p in bin sbin man; do
+		eval pkgin_localbase_\${p}="${pkgin_localbase}/${p}"
+	done
 	pkgin_bin="${pkgin_localbase_bin}/pkgin"
 
 	export PATH=${pkgin_localbase_sbin}:${pkgin_localbase_bin}:${PATH}
