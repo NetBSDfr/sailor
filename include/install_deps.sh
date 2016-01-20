@@ -39,12 +39,13 @@ install_pkgin()
 	bootstrap_doc="/tmp/pkgin_install.txt"
 	${_curl} -o ${bootstrap_doc} ${bootstrap_install_url}
 	bootstrap_url=$(${_egrep} "${joyent_base_url}packages/${OS}/bootstrap/.*.${ARCH}.tar.gz" ${bootstrap_doc})
+	strip_bootstrap_url="${bootstrap_url#curl -Os }"
 
 	read bootstrap_hash bootstrap_tar <<-EOF
 		$(${_egrep} "[0-9a-z]{32}.+${ARCH}.tar.gz" ${bootstrap_doc})
 	EOF
 
-	fetch_localbase="$(${_curl} ${bootstrap_url#curl -Os} | ${tar} ztvf - | ${_egrep} '/.+/pkg_install.conf$')"
+	fetch_localbase="$(${_curl} ${strip_bootstrap_url} | ${tar} ztvf - | ${_egrep} '/.+/pkg_install.conf$')"
 	pkgin_localbase="${fetch_localbase%/*/*}"
 
 	for p in bin sbin man; do
@@ -57,10 +58,10 @@ install_pkgin()
 	[ "${OS}" = "Linux" ] && export MANPATH=${pkgin_localbase_man}:${MANPATH}
 
 	# Generic variables and commands.
-	bootstrap_tmp="/tmp/${bootstrap_tar}"
+	bootstrap_tmp="${HOME}/${bootstrap_tar}"
 
 	# download bootstrap kit.
-	if ! ${_curl} -o "${bootstrap_tmp}" "${bootstrap_url#curl -Os }"; then
+	if ! ${_curl} -o "${bootstrap_tmp}" "${strip_bootstrap_url}"; then
 		printf "version of bootstrap for ${OS} not found.\nplease install it by yourself.\n"
 		exit 1
 	fi
@@ -76,11 +77,11 @@ install_pkgin()
 	${tar} xfp "${bootstrap_tmp}" -c / >/dev/null 2>&1
 
 	# If GPG available, verify GPG signature.
-	if [ ! -z ${gpg} ]; then
+	if [ ! -n "${gpg}" ]; then
 		# Verifiy PGP signature.
 		repo_gpgkey="$(${_egrep} -m1 'gpg --recv-keys.*' ${bootstrap_doc})"
 		${gpg} --keyserver hkp://keys.gnupg.net --recv-keys ${repo_gpgkey##* } >/dev/null 2>&1
-		${_curl} -o "${bootstrap_tmp}.asc" "${bootstrap_url#curl -Os }.asc"
+		${_curl} -o "${bootstrap_tmp}.asc" "${strip_bootstrap_url}.asc"
 		${gpg} --verify "${bootstrap_tmp}.asc" >/dev/null 2>&1
 	fi
 
@@ -93,11 +94,7 @@ install_pkgin()
 
 test_if_pkgin_is_installed()
 {
-
-	if [ -z ${pkgin} ]; then
-		install_pkgin
-	fi
-
+	[ -z ${pkgin} ] && install_pkgin
 	return 0
 }
 
@@ -106,8 +103,7 @@ install_3rd_party_pkg()
 	pkg=${1}
 	test_if_pkgin_is_installed
 
-	${pkgin} search ${pkg}
-	if [ "$?" != 0 ]; then
+	if ! ${pkgin} search ${pkg}; then
 		printf "Package not found.\n"
 		exit 1
 	else

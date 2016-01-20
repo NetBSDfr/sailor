@@ -9,7 +9,7 @@ do
 		printf "Would you like to install ${bin}? [y/N] "
 		read confirm
 		if [ "$confirm" = "y" ]; then
-			. ./install_deps.sh
+			. ${include}/install_deps.sh
 			install_3rd_party_pkg "${bin}"
 		else
 			echo "${bin} is required for sailor to work"
