@@ -20,7 +20,7 @@ do
 	eval ${bin}=${binpath}
 done
 
-rsync="{rsync} -av"
+rsync="${rsync} -av"
 
 case $OS in
 Darwin)
