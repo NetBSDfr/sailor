@@ -20,6 +20,8 @@ do
 	eval ${bin}=${binpath}
 done
 
+rsync="{rsync} -av"
+
 case $OS in
 Darwin)
 	. ${include}/mdns.sh
