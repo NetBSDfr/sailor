@@ -26,25 +26,31 @@ param=${2}
 . ${include}/deps.sh
 . ${include}/helpers.sh
 
-if [ "`${id} -u`" != "0" ]; then
+if [ "$(${id} -u)" != "0" ]; then
 	echo "please run $0 with UID 0"
 	exit 1
 fi
 
-if [ -e "${param}" ]; then
-	param="`dirname ${param}`/`basename ${param}`"
-	# parameter is a file, source it
-	[ -f ${param} ] && . ${param}
-fi
-
 reqs=""
 libs=""
-varbase=`${pkg_info} -QVARBASE pkgin`
+varbase=$(${pkg_info} -QVARBASE pkgin)
 varrun="${varbase}/run/sailor"
-prefix=`${pkg_info} -QLOCALBASE pkgin`
-sysconfdir=`${pkg_info} -QPKG_SYSCONFDIR pkgin`
+prefix=$(${pkg_info} -QLOCALBASE pkgin)
+sysconfdir=$(${pkg_info} -QPKG_SYSCONFDIR pkgin)
+globships=${sysconfdir}/sailor/ships
 
 [ ! -d "${varrun}" ] && ${mkdir} ${varrun}
+
+_param=${globships}/${param}
+
+if [ -e "${param}" ]; then
+	param="$(dirname ${param})/$(basename ${param})"
+	# parameter is a file, source it
+	[ -f ${param} ] && . ${param}
+elif [ -f ${_param} ]; then
+	. ${_param}
+	param=${_param}
+fi
 
 has_services()
 {
@@ -260,6 +266,7 @@ rcd|ls)
 	;;
 *)
 	shipidfile=""
+	# parameter is a directory, probably a shippath
 	if [ -d ${param} ]; then
 		shippath=${param}
 	# must be a shipid then
