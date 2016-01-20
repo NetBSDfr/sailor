@@ -227,7 +227,7 @@ rc_d_name()
 	tempdir=$(mktemp -d /tmp/_sailor.XXXXX)
 	cd ${tempdir}
 	${curl} -s -o ${pkgname} "${pkgurl}"
-	if ! echo "$(file -b ${pkgname})"|${grep} gzip >/dev/null 2>&1; then
+	if ! file -b ${pkgname}|${grep} gzip >/dev/null 2>&1; then
 		# ar does not support stdin as argument
 		ar x ${pkgname}
 		pkgext=${pkgname##*.}
@@ -254,26 +254,31 @@ rc_d_cmd()
 	done
 }
 
-shipidfile=""
-# parameter is not a file
-# is it a directory? if yes, must be a shippath
-if [ -d ${param} ]; then
-	shippath=${param}
-# must be a shipid then
-elif [ ! -f ${param} ]; then
-	shipidfile=${varrun}/${param}.ship
-	if [ ! -f ${shipidfile} ]; then
-		echo "\"${param}\": invalid id or file"
-		exit 1
+case ${cmd} in
+rcd|ls)
+	# no ship id / conf file needed
+	;;
+*)
+	shipidfile=""
+	if [ -d ${param} ]; then
+		shippath=${param}
+	# must be a shipid then
+	elif [ ! -f ${param} ]; then
+		shipidfile=${varrun}/${param}.ship
+		if [ ! -f ${shipidfile} ]; then
+			echo "\"${param}\": invalid id or file"
+			exit 1
+		fi
+		. ${shipidfile}
 	fi
-	. ${shipidfile}
-fi
 
-# no shipid recorded yet, have we got one in shippath?
-[ -z ${shipid} ] && has_shipid && shipid=$(get_shipid)
-# shipid exists, build a shipfileid path
-[ -n "${shipid}" -a -z "${shipidfile}" ] && \
-	shipidfile="${varrun}/${shipid}.ship"
+	# no shipid recorded yet, have we got one in shippath?
+	[ -z ${shipid} ] && has_shipid && shipid=$(get_shipid)
+	# shipid exists, build a shipfileid path
+	[ -n "${shipid}" -a -z "${shipidfile}" ] && \
+		shipidfile="${varrun}/${shipid}.ship"
+	;;
+esac
 
 case ${cmd} in
 build|create|make)
