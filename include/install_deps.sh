@@ -82,13 +82,31 @@ install_pkgin()
 		repo_gpgkey="$(${_egrep} -m1 'gpg --recv-keys.*' ${bootstrap_doc})"
 		${gpg} --keyserver hkp://keys.gnupg.net --recv-keys ${repo_gpgkey##* } >/dev/null 2>&1
 		${_curl} -o "${bootstrap_tmp}.asc" "${strip_bootstrap_url}.asc"
-		${gpg} --verify "${bootstrap_tmp}.asc" >/dev/null 2>&1
+		if ! ${gpg} --verify "${bootstrap_tmp}.asc" >/dev/null 2>&1 ; then
+			while true; do
+				read -p "gpg verification failed, would you still proceed? [y/N] " yN
+				case ${yN} in
+					[y])
+						break
+						;;
+					[N])
+						exit 1
+						;;
+					*)
+						printf "Please answer y or N [y/N] "
+						;;
+				esac
+			done
+		fi
 	fi
 
-	# Fetch packages.
-	## TODO: check if variable are not empty or = '/'
+	for var in "$PKGIN_VARDB" "$bootstrap_tmp" "$bootstrap_doc"; do
+		if [ ! -z ${var} ] && [ ${var} != "/" ] ; then
+			${rm} -r -- "${var}"
+		fi
+	done
 
-	${rm} -r -- "$PKGIN_VARDB" "$bootstrap_tmp" "$bootstrap_doc"
+	# Fetch packages.
 	"${pkgin_bin}" -y update
 }
 
