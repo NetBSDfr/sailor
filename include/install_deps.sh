@@ -23,7 +23,7 @@ case ${OS} in
 		;;
 
 	NetBSD)
-		install_pkgin_on_bsd
+		install_pkgin_netbsd
 		;;
 
 	*)
@@ -31,6 +31,25 @@ case ${OS} in
 		exit 1
 		;;
 esac
+
+install_pkgin_netbsd()
+{
+	# WIP
+	ver=
+	repository="http://ftp.netbsd.org/pub/pkgsrc/packages/${OS}/${ARCH}/${ver}/All"
+	pkgin_conf="/usr/pkg/etc/pkgin/repositories.conf"
+
+	if ! ${pkg_add} pkgin ; then
+		printf "An error has occured during pkgin's installation!\n"
+		exit 1
+	fi
+
+	if [ ! -f ${pkgin_conf} ] ; then
+		echo ${repository} > ${pkgin_conf}
+	fi
+
+	${pkgin} -y update
+}
 
 install_pkgin()
 {
