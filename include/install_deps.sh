@@ -22,6 +22,10 @@ case ${OS} in
 		os="linux"
 		;;
 
+	NetBSD)
+		install_pkgin_on_bsd
+		;;
+
 	*)
 		printf "System not yet supported, sorry.\n"
 		exit 1
