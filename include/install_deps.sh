@@ -68,7 +68,7 @@ install_pkgin()
 				printf "%s\n%s\n" "$pkgin_localbase_bin" "$pkgin_localbase_sbin" >> ${pkgsrc_path}
 			fi
 			if [ ! -f ${pkgsrc_manpath} ]; then
-				printf "manpath %s\nmanpath %s/share/man\n" "$pkgin_localbase_man" "$pkgin_localbase" >> ${manpkgsrc_path}
+				printf "MANPATH %s\nMANPATH %s/share/man\n" "$pkgin_localbase_man" "$pkgin_localbase" >> ${manpkgsrc_path}
 			fi
 			if [ ! $(${grep} "path_helper" ${SHELLRC}) ]; then
 				printf "\n# Evaluate system PATH\nif [ -x /usr/libexec/path_helper ]; then\n\teval \"$(${path_helper} -s)\"\nfi\n"
