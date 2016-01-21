@@ -57,7 +57,30 @@ install_pkgin()
 	done
 	pkgin_bin="${pkgin_localbase_bin}/pkgin"
 
-	export PATH=${pkgin_localbase_sbin}:${pkgin_localbase_bin}:${PATH}
+	# Add {man,}path
+	case ${OS} in
+		[Dd]arwin)
+			pkgsrc_path="/etc/paths.d/pkgsrc"
+			pkgsrc_manpath="/etc/manpaths.d/pkgsrc"
+			path_helper="/usr/libexec/path_helper"
+
+			if [ ! -f ${pkgsrc_path} ]; then
+				printf "%s\n%s\n" "$pkgin_localbase_bin" "$pkgin_localbase_sbin" >> ${pkgsrc_path}
+			fi
+			if [ ! -f ${pkgsrc_manpath} ]; then
+				printf "manpath %s\nmanpath %s/share/man\n" "$pkgin_localbase_man" "$pkgin_localbase" >> ${manpkgsrc_path}
+			fi
+			if [ ! $(${grep} "path_helper" ${SHELLRC}) ]; then
+				printf "\n# Evaluate system PATH\nif [ -x /usr/libexec/path_helper ]; then\n\teval \"$(${path_helper} -s)\"\nfi\n"
+			fi
+			if [ -x ${path_helper} ]; then
+				eval "$(${path_helper} -s)"
+			fi
+			;;
+		[Ll]inux)
+			break
+			;;
+	esac
 
 	[ "${OS}" = "Linux" ] && export MANPATH=${pkgin_localbase_man}:${MANPATH}
 
