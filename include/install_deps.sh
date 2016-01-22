@@ -1,5 +1,3 @@
-#! /usr/bin/env sh
-
 case ${OS} in
 	[Dd]arwin)
 		# Try to find a real way to define if another packages manager is installed.
@@ -15,7 +13,6 @@ case ${OS} in
 		fi
 
 		os="osx"
-
 		;;
 
 	[Ll]inux)
@@ -23,7 +20,7 @@ case ${OS} in
 		;;
 
 	NetBSD)
-		install_pkgin_netbsd
+		break
 		;;
 
 	*)
@@ -32,10 +29,30 @@ case ${OS} in
 		;;
 esac
 
+confirm()
+{
+	confirm_msg="${1}"
+	err_msg="${2}"
+	default_msg="${3}"
+	read -p "${confirm_msg}" yn
+	case ${yn} in
+		[y])
+			break
+			;;
+		[N])
+			printf "${err_msg}\n"
+			exit 1
+			;;
+		*)
+			confirm_msg=${default_msg}
+			continue
+			;;
+	esac
+}
+
 install_pkgin_netbsd()
 {
-	# WIP
-	ver=
+	ver="$(uname -r)"
 	repository="http://ftp.netbsd.org/pub/pkgsrc/packages/${OS}/${ARCH}/${ver}/All"
 	pkgin_conf="/usr/pkg/etc/pkgin/repositories.conf"
 
@@ -96,17 +113,17 @@ install_pkgin()
 				eval "$(${path_helper} -s)"
 			fi
 			;;
+
 		[Ll]inux)
 			break
+			# TODO: MANPATH=${pkgin_localbase_man}:${MANPATH} / PATH=${pkgin_localbase_sbin}:${pkgin_localbase_bin}:${PATH}
 			;;
 	esac
 
-	[ "${OS}" = "Linux" ] && export MANPATH=${pkgin_localbase_man}:${MANPATH}
-
-	# Generic variables and commands.
+	## Generic variables and commands.
 	bootstrap_tmp="${HOME}/${bootstrap_tar}"
 
-	# download bootstrap kit.
+	# Download bootstrap kit ; exit if fails.
 	if ! ${_curl} -o "${bootstrap_tmp}" "${strip_bootstrap_url}"; then
 		printf "version of bootstrap for ${OS} not found.\nplease install it by yourself.\n"
 		exit 1
@@ -119,30 +136,19 @@ install_pkgin()
 		exit 1
 	fi
 
-	# install bootstrap kit to the right path regarding your distribution.
+	# Install bootstrap kit to the right path regarding your distribution.
 	${tar} xfp "${bootstrap_tmp}" -c / >/dev/null 2>&1
 
 	# If GPG available, verify GPG signature.
 	if [ ! -n "${gpg}" ]; then
 		# Verifiy PGP signature.
 		repo_gpgkey="$(${_egrep} -m1 'gpg --recv-keys.*' ${bootstrap_doc})"
-		${gpg} --keyserver hkp://keys.gnupg.net --recv-keys ${repo_gpgkey##* } >/dev/null 2>&1
+		if ! ${gpg} --keyserver hkp://keys.gnupg.net --recv-keys ${repo_gpgkey##* } >/dev/null 2>&1 ; then
+			confirm "Retrieve GPG keys failed, continue? [y/N] " "" "Please answer y or N "
+		fi
 		${_curl} -o "${bootstrap_tmp}.asc" "${strip_bootstrap_url}.asc"
 		if ! ${gpg} --verify "${bootstrap_tmp}.asc" >/dev/null 2>&1 ; then
-			while true; do
-				read -p "gpg verification failed, would you still proceed? [y/N] " yN
-				case ${yN} in
-					[y])
-						break
-						;;
-					[N])
-						exit 1
-						;;
-					*)
-						printf "Please answer y or N [y/N] "
-						;;
-				esac
-			done
+			confirm "gpg verification failed, would you still proceed? [y/N] " "" "Please answer y or N "
 		fi
 	fi
 
@@ -158,7 +164,15 @@ install_pkgin()
 
 test_if_pkgin_is_installed()
 {
-	[ -z ${pkgin} ] && install_pkgin
+	[ -z ${pkgin} ] &&
+	case ${OS} in
+		[Ll]inux|[Dd]arwin)
+			install_pkgin
+			;;
+		NetBSD)
+			install_pkgin_netbsd
+			;;
+	esac
 	return 0
 }
 

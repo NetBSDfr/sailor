@@ -17,6 +17,7 @@ od=$(which od)
 pax="${debug}$(which pax) -rwpe"
 ping=$(which ping)
 pkgin="$(which pkgin)"
+pkg_add="$(which pkg_add)"
 pkg_info="$(which pkg_info)"
 mkdir="$(which mkdir) -p"
 mount=$(which mount)
