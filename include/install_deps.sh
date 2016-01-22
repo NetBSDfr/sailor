@@ -115,8 +115,10 @@ install_pkgin()
 			;;
 
 		[Ll]inux)
-			break
-			# TODO: MANPATH=${pkgin_localbase_man}:${MANPATH} / PATH=${pkgin_localbase_sbin}:${pkgin_localbase_bin}:${PATH}
+			pkgsrc_path="/etc/profile.d/pkgsrc"
+			printf "
+			export PATH=${pkgin_localbase_sbin}:${pkgin_localbase_bin}:${PATH}\n
+			export MANPATH=${pkgin_localbase_man}:${MANPATH}\n" > "${pkgsrc_path}"
 			;;
 	esac
 
@@ -148,7 +150,7 @@ install_pkgin()
 		fi
 		${_curl} -o "${bootstrap_tmp}.asc" "${strip_bootstrap_url}.asc"
 		if ! ${gpg} --verify "${bootstrap_tmp}.asc" >/dev/null 2>&1 ; then
-			confirm "gpg verification failed, would you still proceed? [y/N] " "" "Please answer y or N "
+			confirm "GPG verification failed, would you still proceed? [y/N] " "" "Please answer y or N "
 		fi
 	fi
 
