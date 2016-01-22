@@ -115,10 +115,18 @@ install_pkgin()
 			;;
 
 		[Ll]inux)
-			pkgsrc_path="/etc/profile.d/pkgsrc"
+			# TODO: manpath.config ? manpath(5)
+			profile_path="/etc/profile.d/pkgsrc"
+
+			if [ ! -d ${profile_path%/*} ]; then
+				pkgsrc_path=${profile_path%.d/*}
+			else
+				pkgsrc_path=${profile_path}
+			fi
+
 			printf "
 			export PATH=${pkgin_localbase_sbin}:${pkgin_localbase_bin}:${PATH}\n
-			export MANPATH=${pkgin_localbase_man}:${MANPATH}\n" > "${pkgsrc_path}"
+			export MANPATH=${pkgin_localbase_man}:${MANPATH}\n" >> "${pkgsrc_path}"
 			;;
 	esac
 
