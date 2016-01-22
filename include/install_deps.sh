@@ -116,12 +116,10 @@ install_pkgin()
 
 		[Ll]inux)
 			# TODO: manpath.config ? manpath(5)
-			profile_path="/etc/profile.d/pkgsrc"
+			pkgsrc_path="/etc/profile.d/pkgsrc"
 
-			if [ ! -d ${profile_path%/*} ]; then
-				pkgsrc_path=${profile_path%.d/*}
-			else
-				pkgsrc_path=${profile_path}
+			if [ ! -d ${pkgsrc_path%/*} ]; then
+				pkgsrc_path=${pkgsrc_path%.d/*}
 			fi
 
 			printf "
