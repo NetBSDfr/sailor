@@ -42,7 +42,8 @@ Darwin)
 		mdns ${1}
 	}
 
-	readlink=`which readlink`
+	readlink=$(which readlink)
+	master_passwd=master.passwd
 	# dyld is OSX's dynamic loader
 	# /System/Library/Frameworks* are needed by dscl which is needed by
 	# useradd / groupadd wrappers
@@ -88,7 +89,8 @@ NetBSD)
 		true
 	}
 
-	readlink="`which readlink` -f"
+	readlink="$(which readlink) -f"
+	master_passwd=master.passwd
 	def_bins="/libexec/ld.elf_so /usr/libexec/ld.elf_so $(which pwd_mkdb)"
 	loopmount="/sbin/mount -t null"
 	;;
@@ -124,6 +126,7 @@ Linux)
 	}
 
 	readlink="$(which readlink) -f"
+	master_passwd=shadow
 	def_bins="/lib/ld-linux.so.2 /lib64/ld-linux-x86-64.so.2 \
 		/lib64/libresolv.so.2 /lib64/libnss_dns.so.2"
 	;;

@@ -128,8 +128,8 @@ build()
 		${rsync} ${shippath}/PREFIX/ ${shippath}/${prefix}/
 	# fix etc perms
 	${chown} -R root:wheel ${shippath}/etc
-	master_passwd=${shippath}/etc/master.passwd
-	[ -f ${master_passwd} ] && ${chmod} 600 ${master_passwd}
+	ship_master_passwd=${shippath}/etc/${master_passwd}
+	[ -f ${ship_master_passwd} ] && ${chmod} 600 ${ship_master_passwd}
 
 	need_tools pkgin
 
