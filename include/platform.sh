@@ -128,7 +128,8 @@ Linux)
 	readlink="$(which readlink) -f"
 	master_passwd=shadow
 	def_bins="/lib/ld-linux.so.2 /lib64/ld-linux-x86-64.so.2 \
-		/lib64/libresolv.so.2 /lib64/libnss_dns.so.2"
+		/lib64/libresolv.so.2 /lib64/libnss_dns.so.2 \
+		/lib64/libnss_files.so.2"
 	;;
 esac
 
