@@ -11,6 +11,7 @@ run a service.
 
 **For now** _NetBSD_ and _Darwin / Mac OS X_ are the primary targets of this
 project.
+Basic support is available for _CentOS/amd64 6.0_.
 
 Note that `sailor`'s goal is **not** to provide bullet-proof security, `chroot`
 is definitely not a trustable isolator; instead, `sailor` is a really
