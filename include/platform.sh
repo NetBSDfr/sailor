@@ -23,12 +23,6 @@ Darwin)
 	mkdevs() {
 		true
 	}
-	dev_umounted() {
-		if ! ${mount}|${grep} ${shippath}/dev >/dev/null 2>&1; then
-			return 0
-		fi
-		return 1
-	}
 	mounts() {
 		mcmd=${1}
 
@@ -37,13 +31,7 @@ Darwin)
 			${mount} -t devfs devfs ${shippath}/dev
 			;;
 		umount)
-			while :
-			do
-				${umount} ${shippath}/dev >/dev/null 2>&1
-				if dev_umounted; then break; fi
-				echo "waiting for /dev to be released..."
-				sleep 1
-			done
+			wait_umount dev
 			;;
 		esac
 	}
@@ -101,31 +89,49 @@ NetBSD)
 	}
 
 	readlink="`which readlink` -f"
-	def_bins="/libexec/ld.elf_so /usr/libexec/ld.elf_so"
+	def_bins="/libexec/ld.elf_so /usr/libexec/ld.elf_so $(which pwd_mkdb)"
 	loopmount="/sbin/mount -t null"
 	;;
 Linux)
 	# Linux is on the works right now
 	p_ldd() {
-		/usr/bin/ldd ${1}|${grep} -oE '/lib[^[:space:]]+'
+		/usr/bin/ldd ${1}|${grep} -oE '[^[:space:]]*/lib[^[:space:]]+'
 	}
 	mkdevs() {
 		true
 	}
 	mounts() {
-		true
+		mcmd=${1}
+
+		for m in run dev proc sys
+		do
+			case ${mcmd} in
+			mount)
+				${mkdir} ${shippath}/${m}
+				mount --bind /${m} ${shippath}/${m}
+				;;
+			umount)
+				wait_umount ${m}
+				;;
+			esac
+		done
 	}
 	iflist() {
 		ls -1 /sys/class/net|xargs
 	}
-	readlink="`which readlink` -f"
-	def_bins="/lib/ld-linux.so.2 /lib64/ld-linux-x86-64.so.2"
+	dns() {
+		true
+	}
+
+	readlink="$(which readlink) -f"
+	def_bins="/lib/ld-linux.so.2 /lib64/ld-linux-x86-64.so.2 \
+		/lib64/libresolv.so.2 /lib64/libnss_dns.so.2"
 	;;
 esac
 
 # binaries needed by many packages and not listed in +INSTALL
 # most installation and startup scripts also need /bin/sh
-def_bins="${def_bins} `which pwd_mkdb` ${useradd} ${groupadd} \
-	${pkg_info} ${pkgin} /bin/sh /bin/test `which nologin` /bin/echo \
-	/bin/ps /bin/sleep `which sysctl` `which logger` `which kill` \
-	`which printf` /bin/sh ${ping}"
+def_bins="${def_bins} ${useradd} ${groupadd} ${pkg_info} ${pkgin} \
+	/bin/sh /bin/test $(which nologin) /bin/echo /bin/ps /bin/sleep \
+	$(which sysctl) $(which logger) $(which kill) $(which printf) \
+	 /bin/sh ${ping}"

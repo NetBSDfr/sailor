@@ -39,6 +39,10 @@ prefix=$(${pkg_info} -QLOCALBASE pkgin)
 sysconfdir=$(${pkg_info} -QPKG_SYSCONFDIR pkgin)
 globships=${sysconfdir}/sailor/ships
 
+: ${varbase:=/var}
+: ${prefix:=/usr/pkg}
+: ${sysconfdir:=${prefix}/etc}
+
 [ ! -d "${varrun}" ] && ${mkdir} ${varrun}
 
 _param=${globships}/${param}
@@ -75,13 +79,13 @@ build()
 	# devices
 	${mkdir} ${shippath}/dev
 	mkdevs
-	
+
 	# needed for pkg_install / pkgin to work
 	for d in db/pkg db/pkgin log run tmp
 	do
 		${mkdir} ${shippath}/${varbase}/${d}
 	done
-	
+
 	# tmp directory
 	${mkdir} ${shippath}/tmp
 	chmod 1777 ${shippath}/tmp ${shippath}/var/tmp
@@ -128,27 +132,19 @@ build()
 	[ -f ${master_passwd} ] && ${chmod} 600 ${master_passwd}
 
 	need_tools pkgin
+
+	pkg_reqs_done=""
+	# install pkgin dependencies REQUIRES / libraries
+	get_pkg_deps pkgin
+
 	# reinstall pkgin properly
 	${pkgin} -y -c ${shippath} in pkgin
 
 	${pkgin} -y -c ${shippath} update
 
-	pkg_reqs_done=""
 	for pkg in ${packages}
 	do
-		# retrieve dependencies names
-		pkg_reqs="`${pkgin} -P -c ${shippath} sfd ${pkg} | \
-			awk '/^\t/ {print $1}'` ${pkg}"
-		for p in ${pkg_reqs}
-		do
-			# package requirements already copied
-			if echo "${pkg_reqs_done}"|${grep} -sq ${p}; then
-				continue
-			fi
-			# install all dependencies requirements
-			pkg_requires ${p}
-			pkg_reqs_done="${pkg_reqs_done} ${p}"
-		done
+		get_pkg_deps ${pkg}
 	done
 
 	# mounts might be needed at build for software installation
