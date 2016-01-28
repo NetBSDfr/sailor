@@ -26,25 +26,35 @@ param=${2}
 . ${include}/deps.sh
 . ${include}/helpers.sh
 
-if [ "`${id} -u`" != "0" ]; then
+if [ "$(${id} -u)" != "0" ]; then
 	echo "please run $0 with UID 0"
 	exit 1
 fi
 
-if [ -e "${param}" ]; then
-	param="`dirname ${param}`/`basename ${param}`"
-	# parameter is a file, source it
-	[ -f ${param} ] && . ${param}
-fi
-
 reqs=""
 libs=""
-varbase=`${pkg_info} -QVARBASE pkgin`
+varbase=$(${pkg_info} -QVARBASE pkgin)
 varrun="${varbase}/run/sailor"
-prefix=`${pkg_info} -QLOCALBASE pkgin`
-sysconfdir=`${pkg_info} -QPKG_SYSCONFDIR pkgin`
+prefix=$(${pkg_info} -QLOCALBASE pkgin)
+sysconfdir=$(${pkg_info} -QPKG_SYSCONFDIR pkgin)
+globships=${sysconfdir}/sailor/ships
+
+: ${varbase:=/var}
+: ${prefix:=/usr/pkg}
+: ${sysconfdir:=${prefix}/etc}
 
 [ ! -d "${varrun}" ] && ${mkdir} ${varrun}
+
+_param=${globships}/${param}
+
+if [ -e "${param}" ]; then
+	param="$(dirname ${param})/$(basename ${param})"
+	# parameter is a file, source it
+	[ -f ${param} ] && . ${param}
+elif [ -f ${_param} ]; then
+	. ${_param}
+	param=${_param}
+fi
 
 has_services()
 {
@@ -69,13 +79,13 @@ build()
 	# devices
 	${mkdir} ${shippath}/dev
 	mkdevs
-	
+
 	# needed for pkg_install / pkgin to work
 	for d in db/pkg db/pkgin log run tmp
 	do
 		${mkdir} ${shippath}/${varbase}/${d}
 	done
-	
+
 	# tmp directory
 	${mkdir} ${shippath}/tmp
 	chmod 1777 ${shippath}/tmp ${shippath}/var/tmp
@@ -118,31 +128,23 @@ build()
 		${rsync} ${shippath}/PREFIX/ ${shippath}/${prefix}/
 	# fix etc perms
 	${chown} -R root:wheel ${shippath}/etc
-	master_passwd=${shippath}/etc/master.passwd
-	[ -f ${master_passwd} ] && ${chmod} 600 ${master_passwd}
+	ship_master_passwd=${shippath}/etc/${master_passwd}
+	[ -f ${ship_master_passwd} ] && ${chmod} 600 ${ship_master_passwd}
 
 	need_tools pkgin
+
+	pkg_reqs_done=""
+	# install pkgin dependencies REQUIRES / libraries
+	get_pkg_deps pkgin
+
 	# reinstall pkgin properly
 	${pkgin} -y -c ${shippath} in pkgin
 
 	${pkgin} -y -c ${shippath} update
 
-	pkg_reqs_done=""
 	for pkg in ${packages}
 	do
-		# retrieve dependencies names
-		pkg_reqs="`${pkgin} -P -c ${shippath} sfd ${pkg} | \
-			awk '/^\t/ {print $1}'` ${pkg}"
-		for p in ${pkg_reqs}
-		do
-			# package requirements already copied
-			if echo "${pkg_reqs_done}"|${grep} -sq ${p}; then
-				continue
-			fi
-			# install all dependencies requirements
-			pkg_requires ${p}
-			pkg_reqs_done="${pkg_reqs_done} ${p}"
-		done
+		get_pkg_deps ${pkg}
 	done
 
 	# mounts might be needed at build for software installation
@@ -227,7 +229,7 @@ rc_d_name()
 	tempdir=$(mktemp -d /tmp/_sailor.XXXXX)
 	cd ${tempdir}
 	${curl} -s -o ${pkgname} "${pkgurl}"
-	if ! echo "$(file -b ${pkgname})"|${grep} gzip >/dev/null 2>&1; then
+	if ! file -b ${pkgname}|${grep} gzip >/dev/null 2>&1; then
 		# ar does not support stdin as argument
 		ar x ${pkgname}
 		pkgext=${pkgname##*.}
@@ -254,26 +256,32 @@ rc_d_cmd()
 	done
 }
 
-shipidfile=""
-# parameter is not a file
-# is it a directory? if yes, must be a shippath
-if [ -d ${param} ]; then
-	shippath=${param}
-# must be a shipid then
-elif [ ! -f ${param} ]; then
-	shipidfile=${varrun}/${param}.ship
-	if [ ! -f ${shipidfile} ]; then
-		echo "\"${param}\": invalid id or file"
-		exit 1
+case ${cmd} in
+rcd|ls)
+	# no ship id / conf file needed
+	;;
+*)
+	shipidfile=""
+	# parameter is a directory, probably a shippath
+	if [ -d ${param} ]; then
+		shippath=${param}
+	# must be a shipid then
+	elif [ ! -f ${param} ]; then
+		shipidfile=${varrun}/${param}.ship
+		if [ ! -f ${shipidfile} ]; then
+			echo "\"${param}\": invalid id or file"
+			exit 1
+		fi
+		. ${shipidfile}
 	fi
-	. ${shipidfile}
-fi
 
-# no shipid recorded yet, have we got one in shippath?
-[ -z ${shipid} ] && has_shipid && shipid=$(get_shipid)
-# shipid exists, build a shipfileid path
-[ -n "${shipid}" -a -z "${shipidfile}" ] && \
-	shipidfile="${varrun}/${shipid}.ship"
+	# no shipid recorded yet, have we got one in shippath?
+	[ -z ${shipid} ] && has_shipid && shipid=$(get_shipid)
+	# shipid exists, build a shipfileid path
+	[ -n "${shipid}" -a -z "${shipidfile}" ] && \
+		shipidfile="${varrun}/${shipid}.ship"
+	;;
+esac
 
 case ${cmd} in
 build|create|make)

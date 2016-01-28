@@ -9,8 +9,7 @@ risk and `pull` frequently!
 environment containing _only_ the needed pieces in order to install and  / or
 run a service.
 
-**For now** _NetBSD_ and _Darwin / Mac OS X_ are the primary targets of this
-project.
+For now, `sailor` works on  _NetBSD_, _Darwin / Mac OS X_ and _CentOS/amd64 6_.
 
 Note that `sailor`'s goal is **not** to provide bullet-proof security, `chroot`
 is definitely not a trustable isolator; instead, `sailor` is a really
@@ -34,6 +33,9 @@ installed with `pkgin`.
 
 _Mac OS X_ users are encouraged to use [Save OS X][2] in order to have a working
 environment within seconds.
+
+_CentOS_ users are encouraged to follow [this procedure][15] in order
+to install the required tools.
 
 ## usage
 
@@ -233,3 +235,4 @@ Finally, thanks to the [NetBSDfr][14] team for their support, tests and patches.
 [12]: https://pkgsrc.joyent.com/install-on-osx/
 [13]: http://saveosx.org/
 [14]: http://www.NetBSDfr.org/
+[15]: https://pkgsrc.joyent.com/install-on-linux/

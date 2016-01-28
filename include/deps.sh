@@ -60,7 +60,8 @@ bin_requires()
 pkg_requires()
 {
 	reqs=""
-	pkg=${1%-[0-9]*}
+	# pkg=${1%-[0-9]*}
+	pkg=${1}
 	targets="$(${pkgin} pbd ${pkg}|${awk} -F= '/^REQUIRES=/ { print $2 }')"
 	for req in ${targets}
 	do
@@ -83,3 +84,20 @@ need_tools()
 	done
 }
 
+get_pkg_deps()
+{
+	pkg=${1}
+	# retrieve dependencies names
+	pkg_reqs="$(${pkgin} -y -P -c ${shippath} sfd ${pkg} | \
+		awk '/^\t/ {print $1}') ${pkg}"
+	for p in ${pkg_reqs}
+	do
+		# package requirements already copied
+		if echo "${pkg_reqs_done}"|${grep} -sq ${p}; then
+			continue
+		fi
+		# install all dependencies requirements
+		pkg_requires ${p}
+		pkg_reqs_done="${pkg_reqs_done} ${p}"
+	done
+}
