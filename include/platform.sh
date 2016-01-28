@@ -1,21 +1,17 @@
 # platform specific variables and functions
 
+. ${include}/helpers.sh
+
 # needed 3rd party programs
 for bin in pkg_info pkg_tarup pkgin rsync curl
 do
 	binpath="$(which ${bin})"
 	if [ -z "${binpath}" ]; then
 		echo "${bin} is required for sailor to work"
-		printf "Would you like to install ${bin}? [y/N] "
-		read confirm
-		if [ "$confirm" = "y" ]; then
+		if confirm "Would you like to install ${bin}? [y/N] " "${bin} is required for sailor to work" "Please answer y or N " ; then
 			. ${include}/install_deps.sh
 			install_3rd_party_pkg "${bin}"
-		else
-			echo "${bin} is required for sailor to work"
-			exit 1
 		fi
-		exit 1
 	fi
 	eval ${bin}=${binpath}
 done

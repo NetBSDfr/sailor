@@ -8,3 +8,27 @@ epoch_to_hms()
 
 	printf "%02d:%02d:%02d\n" $h $m $s
 }
+
+confirm()
+{
+	confirm_msg="${1}"
+	err_msg="${2}"
+	default_msg="${3}"
+	while true
+	do
+		read -p "${confirm_msg}" yn
+		case ${yn} in
+			[y])
+				break
+				;;
+			[N])
+				printf "${err_msg}\n"
+				exit 1
+				;;
+			*)
+				confirm_msg=${default_msg}
+				continue
+				;;
+		esac
+	done
+}

@@ -29,27 +29,6 @@ case ${OS} in
 		;;
 esac
 
-confirm()
-{
-	confirm_msg="${1}"
-	err_msg="${2}"
-	default_msg="${3}"
-	read -p "${confirm_msg}" yn
-	case ${yn} in
-		[y])
-			break
-			;;
-		[N])
-			printf "${err_msg}\n"
-			exit 1
-			;;
-		*)
-			confirm_msg=${default_msg}
-			continue
-			;;
-	esac
-}
-
 install_pkgin_netbsd()
 {
 	ver="$(uname -r)"
@@ -70,6 +49,7 @@ install_pkgin_netbsd()
 
 install_pkgin()
 {
+	. ${include}/helpers.sh
 
 	_curl="${curl} --silent --max-time 3 --connect-timeout 2"
 	_egrep="${egrep} -o"
