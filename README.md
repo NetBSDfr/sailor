@@ -9,8 +9,7 @@ risk and `pull` frequently!
 environment containing _only_ the needed pieces in order to install and  / or
 run a service.
 
-**For now** _NetBSD_ and _Darwin / Mac OS X_ are the primary targets of this
-project.  Basic support is available for _CentOS/amd64 6_.
+For now, `sailor` works on  _NetBSD_, _Darwin / Mac OS X_ and _CentOS/amd64 6_.
 
 Note that `sailor`'s goal is **not** to provide bullet-proof security, `chroot`
 is definitely not a trustable isolator; instead, `sailor` is a really
