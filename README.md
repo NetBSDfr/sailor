@@ -34,7 +34,7 @@ installed with `pkgin`.
 _Mac OS X_ users are encouraged to use [Save OS X][2] in order to have a working
 environment within seconds.
 
-_CentOS_ users are encouraged to follow the [this procedure][15] in order
+_CentOS_ users are encouraged to follow [this procedure][15] in order
 to install the required tools.
 
 ## usage
