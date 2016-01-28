@@ -1,4 +1,4 @@
-root:x:0:imil
+root:x:0:
 bin:x:1:bin,daemon
 daemon:x:2:bin,daemon
 sys:x:3:bin,adm
@@ -34,5 +34,3 @@ postfix:x:89:
 cgred:x:499:
 sshd:x:74:
 centos:x:500:
-imil:x:501:
-screen:x:84:
