@@ -34,6 +34,9 @@ installed with `pkgin`.
 _Mac OS X_ users are encouraged to use [Save OS X][2] in order to have a working
 environment within seconds.
 
+_CentOS_ users are encouraged to follow the [following procedure][15] in order
+to install the required tools.
+
 ## usage
 
 * Create a ship
@@ -232,3 +235,4 @@ Finally, thanks to the [NetBSDfr][14] team for their support, tests and patches.
 [12]: https://pkgsrc.joyent.com/install-on-osx/
 [13]: http://saveosx.org/
 [14]: http://www.NetBSDfr.org/
+[15]: https://pkgsrc.joyent.com/install-on-linux/
