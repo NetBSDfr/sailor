@@ -1,4 +1,4 @@
-#!/bin/sh
+#! /usr/bin/env sh
 
 include=include
 
@@ -70,6 +70,14 @@ build()
 	do
 		bin_requires ${bin}
 	done
+
+	if [ -z ${debug} ] && [ "${debug}" = "yes" ] ; then
+		for bin in ${debug_bins} ${shipbins}
+		do
+			bin_requires ${bin}
+		done
+	fi
+
 	# copy flat files from host
 	for file in ${def_files}
 	do
