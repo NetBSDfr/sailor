@@ -65,18 +65,13 @@ build()
 {
 	[ ! -d ${shippath} ] && ${mkdir} ${shippath} || exit 1
 
+	[ -n "${debug}" ] && [ "${debug}" = "yes" ] && shipbins="${shipbins} ${debug_bins}"
+
 	# copy binaries and dependencies from host
 	for bin in ${def_bins} ${shipbins}
 	do
 		bin_requires ${bin}
 	done
-
-	if [ -z ${debug} ] && [ "${debug}" = "yes" ] ; then
-		for bin in ${debug_bins} ${shipbins}
-		do
-			bin_requires ${bin}
-		done
-	fi
 
 	# copy flat files from host
 	for file in ${def_files}
