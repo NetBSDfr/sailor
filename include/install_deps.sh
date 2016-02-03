@@ -67,7 +67,7 @@ install_pkgin()
 
 	fetch_localbase="$(${_curl} ${strip_bootstrap_url} | ${tar} ztf - | ${_egrep} '(./)?.+/pkg_install.conf$')"
 	pkgin_localbase_tmp="${fetch_localbase#./}"
-	pkgin_localbase="/${fetch_localbase_tmp%/*/*}"
+	pkgin_localbase="/${pkgin_localbase_tmp%/*/*}"
 
 	for p in bin sbin man; do
 		eval pkgin_localbase_\${p}="${pkgin_localbase}/${p}"
