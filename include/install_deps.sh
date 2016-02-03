@@ -65,7 +65,7 @@ install_pkgin()
 		$(${_egrep} "[0-9a-z]{32}.+${ARCH}.tar.gz" ${bootstrap_doc})
 	EOF
 
-	fetch_localbase="$(${_curl} ${strip_bootstrap_url} | ${tar} ztf - | ${_egrep} -o '(./)?.+/pkg_install.conf$')"
+	fetch_localbase="$(${_curl} ${strip_bootstrap_url} | ${tar} ztf - | ${_egrep} '(./)?.+/pkg_install.conf$')"
 	pkgin_localbase_tmp="${fetch_localbase#./}"
 	pkgin_localbase="/${fetch_localbase_tmp%/*/*}"
 
