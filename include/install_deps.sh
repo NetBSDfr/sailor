@@ -16,6 +16,8 @@ case ${OS} in
 		;;
 
 	[Ll]inux)
+		# sha1sum under Linux
+		shasum="$(which sha1sum)"
 		os="linux"
 		;;
 
@@ -53,6 +55,8 @@ install_pkgin()
 
 	_curl="${curl} --silent --max-time 3 --connect-timeout 2"
 	_egrep="${egrep} -o"
+	# Unset until pkg_info / pkgin are installed.
+	PKGIN_VARDB="/var/db/pkgin"
 
 	joyent_base_url="https://pkgsrc.joyent.com/"
 	bootstrap_install_url="${joyent_base_url}install-on-${os}/"
@@ -65,12 +69,17 @@ install_pkgin()
 		$(${_egrep} "[0-9a-z]{32}.+${ARCH}.tar.gz" ${bootstrap_doc})
 	EOF
 
-	fetch_localbase="$(${_curl} ${strip_bootstrap_url} | ${tar} ztf - | ${_egrep} '(./)?.+/pkg_install.conf$')"
+	if ! fetch_localbase="$(${_curl} ${strip_bootstrap_url} | 
+				${tar} ztf - | 
+				${_egrep} '(./)?.+/pkg_install.conf$')" ; then
+		printf "ERR: Downloading failed\n"
+		exit 1
+	fi
 	pkgin_localbase_tmp="${fetch_localbase#./}"
 	pkgin_localbase="/${pkgin_localbase_tmp%/*/*}"
 
 	for p in bin sbin man; do
-		eval pkgin_localbase_\${p}="${pkgin_localbase}/${p}"
+		export "pkgin_localbase_${p}=${pkgin_localbase}/${p}"
 	done
 	pkgin_bin="${pkgin_localbase_bin}/pkgin"
 
@@ -97,7 +106,7 @@ install_pkgin()
 
 		[Ll]inux)
 			# TODO: manpath.config ? manpath(5)
-			pkgsrc_path="/etc/profile.d/pkgsrc"
+			pkgsrc_path="/etc/profile.d/pkgsrc.sh"
 
 			if [ ! -d ${pkgsrc_path%/*} ]; then
 				pkgsrc_path=${pkgsrc_path%.d/*}
@@ -106,6 +115,9 @@ install_pkgin()
 			printf "
 			export PATH=${pkgin_localbase_sbin}:${pkgin_localbase_bin}:${PATH}\n
 			export MANPATH=${pkgin_localbase_man}:${MANPATH}\n" >> "${pkgsrc_path}"
+
+			. "${pkgsrc_path}"
+
 			;;
 	esac
 
@@ -119,14 +131,14 @@ install_pkgin()
 	fi
 
 	# Verify SHA1 checksum of the bootstrap kit.
-	bootstrap_sha="$(${shasum} -p ${bootstrap_tmp})"
+	bootstrap_sha="$(${shasum} ${bootstrap_tmp})"
 	if [ ${bootstrap_hash} != ${bootstrap_sha:0:41} ]; then
 		printf "SHA mismatch ! ABOOORT Cap'tain !\n"
 		exit 1
 	fi
 
 	# Install bootstrap kit to the right path regarding your distribution.
-	${tar} xfp "${bootstrap_tmp}" -c / >/dev/null 2>&1
+	${tar} xfp "${bootstrap_tmp}" -C / >/dev/null 2>&1
 
 	# If GPG available, verify GPG signature.
 	if [ ! -n "${gpg}" ]; then
@@ -153,6 +165,8 @@ install_pkgin()
 
 test_if_pkgin_is_installed()
 {
+	pkgin="$(which pkgin)"
+
 	[ -z ${pkgin} ] &&
 	case ${OS} in
 		[Ll]inux|[Dd]arwin)

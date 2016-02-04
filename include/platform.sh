@@ -5,12 +5,21 @@
 # needed 3rd party programs
 for bin in pkg_info pkg_tarup pkgin rsync curl
 do
+	[ -f /etc/profile ] && . /etc/profile
+
 	binpath="$(which ${bin})"
 	if [ -z "${binpath}" ]; then
 		echo "${bin} is required for sailor to work"
 		if confirm "Would you like to install ${bin}? [y/N] " "${bin} is required for sailor to work" "Please answer y or N " ; then
-			. ${include}/install_deps.sh
-			install_3rd_party_pkg "${bin}"
+			case ${bin} in
+				pkg_info|pkgin)
+					. ${include}/install_deps.sh
+					test_if_pkgin_is_installed
+					;;
+				*)
+					. ${include}/install_deps.sh
+					install_3rd_party_pkg "${bin}"
+			esac
 		fi
 	fi
 	eval ${bin}=${binpath}
