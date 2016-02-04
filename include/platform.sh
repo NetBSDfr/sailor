@@ -3,7 +3,7 @@
 . ${include}/helpers.sh
 
 # needed 3rd party programs
-for bin in pkg_info pkg_tarup pkgin rsync curl
+for bin in pkg_info pkg_tarup pkgin rsync curl pax
 do
 	[ -f /etc/profile ] && . /etc/profile
 
