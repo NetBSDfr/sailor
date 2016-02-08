@@ -53,7 +53,7 @@ install_pkgin()
 {
 	. ${include}/helpers.sh
 
-	_curl="${curl} --silent --max-time 3 --connect-timeout 2"
+	_curl="${curl} --silent --max-time 5 --connect-timeout 2"
 	_egrep="${egrep} -o"
 	# Unset until pkg_info / pkgin are installed.
 	PKGIN_VARDB="/var/db/pkgin"
@@ -62,7 +62,7 @@ install_pkgin()
 	bootstrap_install_url="${joyent_base_url}install-on-${os}/"
 	bootstrap_doc="/tmp/pkgin_install.txt"
 	${_curl} -o ${bootstrap_doc} ${bootstrap_install_url}
-	bootstrap_url=$(${_egrep} "${joyent_base_url}packages/${OS}/bootstrap/.*.${ARCH}.tar.gz" ${bootstrap_doc})
+	bootstrap_url=$(${_egrep} -m1 "${joyent_base_url}packages/${OS}/bootstrap/.*.${ARCH}.tar.gz" ${bootstrap_doc})
 	strip_bootstrap_url="${bootstrap_url#curl -Os }"
 
 	read bootstrap_hash bootstrap_tar <<-EOF
@@ -83,6 +83,44 @@ install_pkgin()
 	done
 	pkgin_bin="${pkgin_localbase_bin}/pkgin"
 
+	## Generic variables and commands.
+	bootstrap_tmp="${HOME}/${bootstrap_tar}"
+
+	# Download bootstrap kit ; exit if fails.
+	if ! ${_curl} -o "${bootstrap_tmp}" "${strip_bootstrap_url}"; then
+		printf "version of bootstrap for ${OS} not found.\nplease install it by yourself.\n"
+		exit 1
+	fi
+
+	# Verify SHA1 checksum of the bootstrap kit.
+	bootstrap_sha="$(${shasum} ${bootstrap_tmp})"
+	if [ ${bootstrap_hash} != ${bootstrap_sha:0:41} ]; then
+		printf "SHA mismatch ! ABOOORT Cap'tain !\n"
+		exit 1
+	fi
+
+	# If GPG available, verify GPG signature.
+	if [ ! -n "${gpg}" ]; then
+		# Verifiy PGP signature.
+		repo_gpgkey="$(${_egrep} -m1 'gpg --recv-keys.*' ${bootstrap_doc})"
+		if ! ${gpg} --keyserver hkp://keys.gnupg.net --recv-keys ${repo_gpgkey##* } >/dev/null 2>&1 ; then
+			confirm "Retrieve GPG keys failed, continue? [y/N] " "" "Please answer y or N "
+		fi
+		${_curl} -o "${bootstrap_tmp}.asc" "${strip_bootstrap_url}.asc"
+		if ! ${gpg} --verify "${bootstrap_tmp}.asc" >/dev/null 2>&1 ; then
+			confirm "GPG verification failed, would you still proceed? [y/N] " "" "Please answer y or N "
+		fi
+	fi
+
+	# Install bootstrap kit to the right path regarding your distribution.
+	${tar} xfp "${bootstrap_tmp}" -C / >/dev/null 2>&1
+
+	for var in "$PKGIN_VARDB" "$bootstrap_tmp" "$bootstrap_doc"; do
+		if [ ! -z ${var} ] && [ ${var} != "/" ] ; then
+			${rm} -r -- "${var}"
+		fi
+	done
+
 	# Add {man,}path
 	case ${OS} in
 		[Dd]arwin)
@@ -96,8 +134,8 @@ install_pkgin()
 			if [ ! -f ${pkgsrc_manpath} ]; then
 				printf "MANPATH %s\nMANPATH %s/share/man\n" "${pkgin_localbase_man}" "${pkgin_localbase}" >> ${manpkgsrc_path}
 			fi
-			if [ ! $(${grep} "path_helper" ${SHELLRC}) ]; then
-				printf "\n# Evaluate system PATH\nif [ -x /usr/libexec/path_helper ]; then\n\teval \"$(${path_helper} -s)\"\nfi\n"
+			if ! ${grep} -q "path_helper" ${SHELLRC} ; then
+				printf "\n# Evaluate system PATH\nif [ -x /usr/libexec/path_helper ]; then\n\teval \"$(${path_helper} -s)\"\nfi\n" >> ${SHELLRC}
 			fi
 			if [ -x ${path_helper} ]; then
 				eval "$(${path_helper} -s)"
@@ -120,44 +158,6 @@ install_pkgin()
 
 			;;
 	esac
-
-	## Generic variables and commands.
-	bootstrap_tmp="${HOME}/${bootstrap_tar}"
-
-	# Download bootstrap kit ; exit if fails.
-	if ! ${_curl} -o "${bootstrap_tmp}" "${strip_bootstrap_url}"; then
-		printf "version of bootstrap for ${OS} not found.\nplease install it by yourself.\n"
-		exit 1
-	fi
-
-	# Verify SHA1 checksum of the bootstrap kit.
-	bootstrap_sha="$(${shasum} ${bootstrap_tmp})"
-	if [ ${bootstrap_hash} != ${bootstrap_sha:0:41} ]; then
-		printf "SHA mismatch ! ABOOORT Cap'tain !\n"
-		exit 1
-	fi
-
-	# Install bootstrap kit to the right path regarding your distribution.
-	${tar} xfp "${bootstrap_tmp}" -C / >/dev/null 2>&1
-
-	# If GPG available, verify GPG signature.
-	if [ ! -n "${gpg}" ]; then
-		# Verifiy PGP signature.
-		repo_gpgkey="$(${_egrep} -m1 'gpg --recv-keys.*' ${bootstrap_doc})"
-		if ! ${gpg} --keyserver hkp://keys.gnupg.net --recv-keys ${repo_gpgkey##* } >/dev/null 2>&1 ; then
-			confirm "Retrieve GPG keys failed, continue? [y/N] " "" "Please answer y or N "
-		fi
-		${_curl} -o "${bootstrap_tmp}.asc" "${strip_bootstrap_url}.asc"
-		if ! ${gpg} --verify "${bootstrap_tmp}.asc" >/dev/null 2>&1 ; then
-			confirm "GPG verification failed, would you still proceed? [y/N] " "" "Please answer y or N "
-		fi
-	fi
-
-	for var in "$PKGIN_VARDB" "$bootstrap_tmp" "$bootstrap_doc"; do
-		if [ ! -z ${var} ] && [ ${var} != "/" ] ; then
-			${rm} -r -- "${var}"
-		fi
-	done
 
 	# Fetch packages.
 	"${pkgin_bin}" -y update
