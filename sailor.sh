@@ -10,7 +10,7 @@ usage()
 	echo "       $0 status <ship id>"
 	echo "       $0 destroy <ship.conf>"
 	echo "       $0 run <ship id> <command> ..."
-	echo "       $0 enter <ship id>"
+	echo "       $0 enter <ship id> [user]"
 	echo "       $0 rcd <package>"
 	echo "       $0 ls"
 	exit 1
@@ -406,8 +406,8 @@ run)
 	;;
 enter)
 	has_shipidfile
-
-	chroot ${shippath} ${sh}
+	[ $# -gt 2 ] && suser="sudo -u ${3}"
+	chroot ${shippath} ${suser} ${sh}
 	;;
 *)
 	usage
