@@ -137,8 +137,8 @@ install_pkgin()
 			if ! ${grep} -q "path_helper" ${SHELLRC} ; then
 				printf "\n# Evaluate system PATH\nif [ -x /usr/libexec/path_helper ]; then\n\teval \"$(${path_helper} -s)\"\nfi\n" >> ${SHELLRC}
 			fi
-			if [ ! -f "${SHELLRC}_profile" ] ; then
-				printf "# Load .bashrc if it exists\ntest -f ~/.bashrc && source ~/.bashrc\n" >> "${SHELLRC}_profile"
+			if [ ${SHELLRC##*/} = ".bashrc"  ] && [ ! -f "${SHELLRC%rc}_profile" ] ; then
+				printf "# Load .bashrc if it exists\ntest -f ~/.bashrc && source ~/.bashrc\n" >> "${SHELLRC%rc}_profile"
 			fi
 			if [ -x ${path_helper} ]; then
 				eval "$(${path_helper} -s)"
