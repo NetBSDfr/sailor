@@ -4,8 +4,10 @@ chmod=$(which chmod)
 chown=$(which chown)
 chroot=$(which chroot)
 curl=$(which curl)
+cut=$(which cut)
 cp=$(${debug}which cp)
 date=$(which date)
+echo=$(which echo)
 egrep=$(which egrep)
 grep=$(which grep)
 groupadd=$(which groupadd)
@@ -35,8 +37,8 @@ umount=$(which umount)
 useradd=$(which useradd)
 ARCH=$(uname -m)
 DDATE=$(date +%Y%m%d)
-SHELLRC=~/.$(echo $SHELL | awk -F/ '{print$NF}')rc
-PKGIN_VARDB="$(${pkg_info} -QVARBASE pkgin)/db/pkgin"
+SHELLRC=~/.$(${echo} $SHELL | ${awk} -F/ '{print$NF}')rc
+[ -z ${pkg_info} ] && PKGIN_VARDB="$(${pkg_info} -QVARBASE pkgin)/db/pkgin"
 OS=$(uname -s)
 
 # columns sizes for ls
