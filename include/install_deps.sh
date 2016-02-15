@@ -45,6 +45,8 @@ install_pkgin_netbsd()
 		echo ${repository} > ${pkgin_conf}
 	fi
 
+	pkgin=$(which pkgin)
+
 	${pkgin} -y update
 }
 
