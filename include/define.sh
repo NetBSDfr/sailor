@@ -38,7 +38,7 @@ useradd=$(which useradd)
 ARCH=$(uname -m)
 DDATE=$(date +%Y%m%d)
 SHELLRC=~/.$(${echo} $SHELL | ${awk} -F/ '{print$NF}')rc
-[ -n ${pkg_info} ] && PKGIN_VARDB="$(${pkg_info} -QVARBASE pkgin)/db/pkgin"
+PKGIN_VARDB="$(${pkg_info} -QVARBASE pkgin)/db/pkgin"
 OS=$(uname -s)
 
 # columns sizes for ls

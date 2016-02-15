@@ -21,8 +21,8 @@ usage()
 cmd=${1}
 param=${2}
 
-. ${include}/define.sh
 . ${include}/platform.sh
+. ${include}/define.sh
 . ${include}/deps.sh
 . ${include}/helpers.sh
 

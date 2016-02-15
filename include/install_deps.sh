@@ -54,8 +54,14 @@ install_pkgin()
 {
 	. ${include}/helpers.sh
 
-	_curl="${curl} --silent --max-time 5 --connect-timeout 2"
-	_egrep="${egrep} -o"
+	# We define here binaries because define.sh not yet loaded.
+	_curl="$(which curl) --silent --max-time 5 --connect-timeout 2"
+	_egrep="$(which egrep) -o"
+	cut=$(which cut)
+	gpg=$(which gpg 2>/dev/null)
+	rm=$(which rm)
+	tar=$(which tar)
+
 	# Unset until pkg_info / pkgin are installed.
 	PKGIN_VARDB="/var/db/pkgin"
 
@@ -170,7 +176,7 @@ install_pkgin()
 
 test_if_pkgin_is_installed()
 {
-	pkgin="$(which pkgin)"
+	pkgin="$(which pkgin 2>/dev/null)"
 
 	[ -z ${pkgin} ] &&
 	case ${OS} in
