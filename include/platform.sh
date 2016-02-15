@@ -7,7 +7,7 @@ for bin in pkg_info pkg_tarup pkgin rsync curl pax
 do
 	[ -f /etc/profile ] && . /etc/profile
 
-	binpath="$(which ${bin})"
+	binpath="$(which ${bin} 2>/dev/null)"
 	if [ -z "${binpath}" ]; then
 		echo "${bin} is required for sailor to work"
 		if confirm "Would you like to install ${bin}? [y/N] " "${bin} is required for sailor to work" "Please answer y or N " ; then
