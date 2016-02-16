@@ -1,3 +1,6 @@
+ARCH=$(uname -m)
+OS=$(uname -s)
+
 case ${OS} in
 	[Dd]arwin)
 		# Try to find a real way to define if another packages manager is installed.
