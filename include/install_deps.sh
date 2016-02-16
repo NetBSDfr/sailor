@@ -103,9 +103,8 @@ install_pkgin()
 	fi
 
 	# Verify SHA1 checksum of the bootstrap kit.
-	bootstrap_sha="$(${shasum} ${bootstrap_tmp})"
-	bootstrap_strip=$(${echo} ${bootstrap_sha} | ${cut} -c 1-41)
-	if [ ${bootstrap_hash} != ${bootstrap_strip} ]; then
+	bootstrap_sha="$(${shasum} ${bootstrap_tmp} | ${cut} -c 1-40)"
+	if [ "${bootstrap_hash}" != "${bootstrap_sha}" ]; then
 		printf "SHA mismatch ! ABOOORT Cap'tain !\n"
 		exit 1
 	fi

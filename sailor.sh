@@ -21,15 +21,15 @@ usage()
 cmd=${1}
 param=${2}
 
+if [ "$($(which id) -u)" != "0" ]; then
+	echo "please run $0 with UID 0"
+	exit 1
+fi
+
 . ${include}/platform.sh
 . ${include}/define.sh
 . ${include}/deps.sh
 . ${include}/helpers.sh
-
-if [ "$(${id} -u)" != "0" ]; then
-	echo "please run $0 with UID 0"
-	exit 1
-fi
 
 reqs=""
 libs=""
