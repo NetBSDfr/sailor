@@ -41,7 +41,7 @@ install_pkgin_netbsd()
 	repository="http://ftp.netbsd.org/pub/pkgsrc/packages/${OS}/${ARCH}/${ver}/All"
 	pkgin_conf="/usr/pkg/etc/pkgin/repositories.conf"
 
-	if [ -z "${PKG_PATH}" ] && PKG_PATH="${repository}" && export PKG_PATH
+	[ -z "${PKG_PATH}" ] && PKG_PATH="${repository}" && export PKG_PATH
 
 	if ! ${pkg_add} pkgin ; then
 		printf "An error has occured during pkgin's installation!\n"
