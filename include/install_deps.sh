@@ -36,8 +36,12 @@ esac
 install_pkgin_netbsd()
 {
 	ver="$(uname -r)"
+	pkg_add=$(which pkg_add)
+
 	repository="http://ftp.netbsd.org/pub/pkgsrc/packages/${OS}/${ARCH}/${ver}/All"
 	pkgin_conf="/usr/pkg/etc/pkgin/repositories.conf"
+
+	if [ -z "${PKG_PATH}" ] && PKG_PATH="${repository}" && export PKG_PATH
 
 	if ! ${pkg_add} pkgin ; then
 		printf "An error has occured during pkgin's installation!\n"
@@ -125,7 +129,7 @@ install_pkgin()
 	# Install bootstrap kit to the right path regarding your distribution.
 	${tar} xfp "${bootstrap_tmp}" -C / >/dev/null 2>&1
 
-	for var in "$PKGIN_VARDB" "$bootstrap_tmp" "$bootstrap_doc"; do
+	for var in "$bootstrap_tmp" "$bootstrap_doc"; do
 		if [ ! -z ${var} ] && [ ${var} != "/" ] ; then
 			${rm} -r -- "${var}"
 		fi
