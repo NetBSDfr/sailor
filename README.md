@@ -25,6 +25,7 @@ workstation filesystem.
 `sailor` needs the following third party tools:
 
 * `pkg_install`
+* `pkg_tarup`
 * `pkgin`
 * `rsync`
 
