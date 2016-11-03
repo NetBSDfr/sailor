@@ -18,7 +18,7 @@ workstation filesystem.
 
 ## demo
 
-![gif](http://imil.net/stuff/sailor.gif)
+![gif](https://imil.net/stuff/sailor.gif)
 
 ## requirements
 

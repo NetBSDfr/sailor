@@ -45,12 +45,15 @@ globships=${sysconfdir}/sailor/ships
 
 [ ! -d "${varrun}" ] && ${mkdir} ${varrun}
 
+# system path for ships configuration files
 _param=${globships}/${param}
 
+# ship parameter is a path
 if [ -e "${param}" ]; then
 	param="$(dirname ${param})/$(basename ${param})"
 	# parameter is a file, source it
 	[ -f ${param} ] && . ${param}
+# try if ship configuration is a global system path
 elif [ -f ${_param} ]; then
 	. ${_param}
 	param=${_param}
