@@ -18,7 +18,7 @@ workstation filesystem.
 
 ## demo
 
-![gif](http://imil.net/stuff/sailor.gif)
+![gif](https://web.archive.org/web/20160222143846/https://camo.githubusercontent.com/4df994ee9227bd999e91a2726318fcca7c5473bc/687474703a2f2f696d696c2e6e65742f73747566662f7361696c6f722e676966)
 
 ## requirements
 
