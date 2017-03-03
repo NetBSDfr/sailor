@@ -32,10 +32,10 @@ workstation filesystem.
 _NetBSD_ users should have those by default, except for `rsync` which can be
 installed with `pkgin`.
 
-_Mac OS X_ users are encouraged to use [Save OS X][2] in order to have a working
+_Mac OS X_ users are encouraged to use the [Joyent OS X package repository][12] in order to have a working
 environment within seconds.
 
-_CentOS_ users are encouraged to follow [this procedure][15] in order
+_CentOS_ users are encouraged to follow [Joyent Linux package repository][15] in order
 to install the required tools.
 
 ## usage
@@ -128,7 +128,7 @@ in the `ship` configuration file is evaluated as our user's home directory.
 
 #### Fire up a fully working and isolated [nginx][3] + [php-fpm][4] stack
 
-[Download and install Save OS X][5] if running Mac OS X
+[Download and install Joyent's OS X boostrap kit][12] if running Mac OS X
 
 ```
 $ git clone https://github.com/NetBSDfr/sailor.git
@@ -158,7 +158,7 @@ might want to change its listen port in
 
 #### Fire up a fully working and isolated [nginx][3] + [nodejs][6] stack
 
-[Download and install Save OS X][5] if running Mac OS X
+[Download and install Joyent's OS X boostrap kit][12] if running Mac OS X
 
 ```
 $ git clone https://github.com/NetBSDfr/sailor.git
@@ -212,7 +212,7 @@ Probably more to come...
 
 ## greetings
 
-This software has been made possible under Mac OS X thanks to [joyent][10] and
+This software has been made possible under Mac OS X thanks to [Joyent][10] and
 in particular [Jonathan Perkin][11] who's maintaining OSX [pkgsrc binary
 packages][12].
 
