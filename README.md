@@ -9,7 +9,7 @@ risk and `pull` frequently!
 environment containing _only_ the needed pieces in order to install and  / or
 run a service.
 
-For now, `sailor` works on  _NetBSD_, _Darwin / Mac OS X_ and _CentOS/amd64 6_.
+For now, `sailor` works on  _NetBSD_, _Darwin / Mac OS X_ and _64-bit RHEL (including variants such as CentOS)_.
 
 Note that `sailor`'s goal is **not** to provide bullet-proof security, `chroot`
 is definitely not a trustable isolator; instead, `sailor` is a really
@@ -35,7 +35,7 @@ installed with `pkgin`.
 _Mac OS X_ users are encouraged to use the [Joyent OS X package repository][12] in order to have a working
 environment within seconds.
 
-_CentOS_ users are encouraged to follow [Joyent Linux package repository][15] in order
+_64-bit RHEL (including variants such as CentOS)_ users are encouraged to follow [Joyent Linux package repository][15] in order
 to install the required tools.
 
 ## usage
