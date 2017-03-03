@@ -44,7 +44,7 @@ Darwin)
 
 	readlink=$(which readlink)
 	master_passwd=master.passwd
-	# dyld is OSX's dynamic loader
+	# dyld is OS X's dynamic loader
 	# /System/Library/Frameworks* are needed by dscl which is needed by
 	# useradd / groupadd wrappers
 	SLF="/System/Library/Frameworks"

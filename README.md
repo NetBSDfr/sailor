@@ -9,7 +9,7 @@ risk and `pull` frequently!
 environment containing _only_ the needed pieces in order to install and  / or
 run a service.
 
-For now, `sailor` works on  _NetBSD_, _Darwin / Mac OS X_ and _CentOS/amd64 6_.
+For now, `sailor` works on  _NetBSD_, _Darwin / Mac OS X_ and _64-bit RHEL (including variants such as CentOS)_.
 
 Note that `sailor`'s goal is **not** to provide bullet-proof security, `chroot`
 is definitely not a trustable isolator; instead, `sailor` is a really
@@ -32,10 +32,10 @@ workstation filesystem.
 _NetBSD_ users should have those by default, except for `rsync` which can be
 installed with `pkgin`.
 
-_Mac OS X_ users are encouraged to use [Save OS X][2] in order to have a working
+_Mac OS X_ users are encouraged to use the [Joyent OS X package repository][12] in order to have a working
 environment within seconds.
 
-_CentOS_ users are encouraged to follow [this procedure][15] in order
+_64-bit RHEL (including variants such as CentOS)_ users are encouraged to follow [Joyent Linux package repository][15] in order
 to install the required tools.
 
 ## usage
@@ -128,7 +128,7 @@ in the `ship` configuration file is evaluated as our user's home directory.
 
 #### Fire up a fully working and isolated [nginx][3] + [php-fpm][4] stack
 
-[Download and install Save OS X][5] if running Mac OS X
+[Download and install Joyent's OS X boostrap kit][12] if running Mac OS X
 
 ```
 $ git clone https://github.com/NetBSDfr/sailor.git
@@ -152,13 +152,13 @@ X-Powered-By: PHP/5.6.13
 PHP source code can be found in `nginxphp/var/www/php` which you can `chown` to
 your own user and populate with the PHP code you want.
 
-`nginx` configuration is located in `nginxphp/opt/pkg/etc/nginx` (on OSX), you
+`nginx` configuration is located in `nginxphp/opt/pkg/etc/nginx` (on OS X), you
 might want to change its listen port in
 `nginxphp/opt/pkg/etc/nginx/global.conf`
 
 #### Fire up a fully working and isolated [nginx][3] + [nodejs][6] stack
 
-[Download and install Save OS X][5] if running Mac OS X
+[Download and install Joyent's OS X boostrap kit][12] if running Mac OS X
 
 ```
 $ git clone https://github.com/NetBSDfr/sailor.git
@@ -212,12 +212,12 @@ Probably more to come...
 
 ## greetings
 
-This software has been made possible under Mac OS X thanks to [joyent][10] and
-in particular [Jonathan Perkin][11] who's maintaining OSX [pkgsrc binary
+This software has been made possible under Mac OS X thanks to [Joyent][10] and
+in particular [Jonathan Perkin][11] who's maintaining OS X [pkgsrc binary
 packages][12].
 
 Thanks to [Youri Mouton and his awesome work on Save OS X][13] which makes
-the use of [pkgin][1] on OSX even simpler.
+the use of [pkgin][1] on OS X even simpler.
 
 Finally, thanks to the [NetBSDfr][14] team for their support, tests and patches.
 
