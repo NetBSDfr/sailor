@@ -152,7 +152,7 @@ X-Powered-By: PHP/5.6.13
 PHP source code can be found in `nginxphp/var/www/php` which you can `chown` to
 your own user and populate with the PHP code you want.
 
-`nginx` configuration is located in `nginxphp/opt/pkg/etc/nginx` (on OSX), you
+`nginx` configuration is located in `nginxphp/opt/pkg/etc/nginx` (on OS X), you
 might want to change its listen port in
 `nginxphp/opt/pkg/etc/nginx/global.conf`
 
@@ -213,11 +213,11 @@ Probably more to come...
 ## greetings
 
 This software has been made possible under Mac OS X thanks to [Joyent][10] and
-in particular [Jonathan Perkin][11] who's maintaining OSX [pkgsrc binary
+in particular [Jonathan Perkin][11] who's maintaining OS X [pkgsrc binary
 packages][12].
 
 Thanks to [Youri Mouton and his awesome work on Save OS X][13] which makes
-the use of [pkgin][1] on OSX even simpler.
+the use of [pkgin][1] on OS X even simpler.
 
 Finally, thanks to the [NetBSDfr][14] team for their support, tests and patches.
 

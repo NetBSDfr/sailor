@@ -111,7 +111,7 @@ build()
 	${mkdir} ${shippath}/etc
 	${cp} /usr/share/zoneinfo/GMT ${shippath}/etc/localtime
 	${cp} /etc/resolv.conf ${shippath}/etc/
-	# custom DNS (mDNSresponder for OSX)
+	# custom DNS (mDNSresponder for OS X)
 	dns add
 	# custom /etc
 	common="ships/common"
@@ -303,7 +303,7 @@ build|create|make)
 	at_cmd_run build ${param}
 	# umount devfs and loopback mounts
 	mounts umount
-	# remove mDNS (OSX)
+	# remove mDNS (OS X)
 	dns del
 	;;
 destroy)
@@ -353,7 +353,7 @@ start|stop|status)
 		${cat} ${param} >> ${shipidfile}
 		# start user commands after the service is started
 		ipupdown up
-		# add mDNS entry (OSX)
+		# add mDNS entry (OS X)
 		dns add
 		# mount loopbacks and devfs
 		mounts mount
@@ -371,7 +371,7 @@ start|stop|status)
 		ipupdown down
 		# start user commands after the service is stopped
 		at_cmd_run stop ${shipidfile}
-		# remove mDNS entry (OSX)
+		# remove mDNS entry (OS X)
 		dns del
 		# umount loopbacks and devfs
 		mounts umount
