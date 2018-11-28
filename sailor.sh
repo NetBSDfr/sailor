@@ -100,7 +100,7 @@ build()
 	for p in pkg_install pkgin
 	do
 		${pkg_tarup} -d "${shippath}/tmp" "${p}"
-		${tar} zxfp "${shippath}/tmp/${p}*tgz" -C "${shippath}/${prefix}"
+		${tar} zxfp "${shippath}/tmp/${p}"*tgz -C "${shippath}/${prefix}"
 	done
 	bin_requires "${prefix}/sbin/pkg_add"
 	bin_requires "${prefix}/bin/pkgin"
