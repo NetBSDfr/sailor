@@ -1,3 +1,7 @@
+# This project, like all of my personal projects in GitHub have moved to Gitlab
+# Here's sailor valid repository https://gitlab.com/iMil/sailor
+
+
 # sailor
 
 ## Wannabe portable container system
