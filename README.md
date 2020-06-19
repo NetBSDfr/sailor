@@ -87,6 +87,12 @@ likely name for service: apache
 # ./sailor.sh run 4ecd1896d35a66c7 ps axuwww
 ```
 
+* Enter a ship
+
+```
+# ./sailor.sh enter 4ecd1896d35a66c7
+```
+
 ## configuration file
 
 A ship is defined by its configuration file which contains:
@@ -220,6 +226,8 @@ Thanks to [Youri Mouton and his awesome work on Save OS X][13] which makes
 the use of [pkgin][1] on OS X even simpler.
 
 Finally, thanks to the [NetBSDfr][14] team for their support, tests and patches.
+
+Sailor icon by [Freeplk](https://www.flaticon.com/authors/freepik).
 
 [0]: https://en.wikipedia.org/wiki/Chroot
 [1]: http://pkgin.net
