@@ -231,7 +231,7 @@ the use of [pkgin][1] on OS X even simpler.
 
 Finally, thanks to the [NetBSDfr][14] team for their support, tests and patches.
 
-Sailor icon by [Freeplk][https://www.flaticon.com/authors/freepik].
+Sailor icon by [Freeplk](https://www.flaticon.com/authors/freepik).
 
 [0]: https://en.wikipedia.org/wiki/Chroot
 [1]: http://pkgin.net
