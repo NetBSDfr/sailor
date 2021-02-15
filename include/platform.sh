@@ -54,6 +54,9 @@ Darwin)
 	${SLF}/CoreFoundation.framework/Versions/A/CoreFoundation"
 	# request-schema.plist needed for dscl
 	def_files="/System/Library/OpenDirectory/request-schema.plist"
+	debug_bins="$(which dtruss) $(which dtrace) $(which cp) $(which ls) \
+		$(which cat) $(which expr) $(which bash) $(which less) \
+		$(which otool)"
 	;;
 NetBSD)
 	p_ldd() {
