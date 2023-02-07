@@ -66,7 +66,11 @@ has_services()
 
 build()
 {
-	[ ! -d ${shippath} ] && ${mkdir} ${shippath} || exit 1
+	# 1. ship directory does not exist
+	# 2. ship directory exists but is empty (i.e. mount point)
+	[ -z "$(ls -A ${shippath} 2>/dev/null)" ] && \
+		${mkdir} -p ${shippath} || \
+		exit 1
 
 	# copy binaries and dependencies from host
 	for bin in ${def_bins} ${shipbins}
