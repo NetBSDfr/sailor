@@ -61,6 +61,9 @@ NetBSD)
 	}
 	mkdevs() {
 		${cp} /dev/MAKEDEV ${shippath}/dev
+		cd ${shippath}/dev
+		sh MAKEDEV all
+		cd -
 	}
 	mounts() {
 		mcmd=${1}
