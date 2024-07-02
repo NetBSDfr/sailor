@@ -93,6 +93,10 @@ NetBSD)
 	readlink="$(which readlink) -f"
 	master_passwd=master.passwd
 	def_bins="/libexec/ld.elf_so /usr/libexec/ld.elf_so $(which pwd_mkdb)"
+	for s in $(awk '/^[^#].+\.so/ {print $3}' /etc/pam.d/su)
+	do
+		def_bins="$def_bins /usr/lib/security/${s}*"
+	done
 	loopmount="/sbin/mount -t null"
 	;;
 Linux)
