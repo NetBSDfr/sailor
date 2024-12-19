@@ -22,6 +22,10 @@ cmd=${1}
 param=${2}
 
 . ${include}/define.sh
+
+prefix=$(${pkg_info} -QLOCALBASE pkgin)
+PATH=${PATH}:${prefix}/bin:${prefix}/sbin
+
 . ${include}/platform.sh
 . ${include}/deps.sh
 . ${include}/helpers.sh
@@ -35,12 +39,10 @@ reqs=""
 libs=""
 varbase=$(${pkg_info} -QVARBASE pkgin)
 varrun="${varbase}/run/sailor"
-prefix=$(${pkg_info} -QLOCALBASE pkgin)
 sysconfdir=$(${pkg_info} -QPKG_SYSCONFDIR pkgin)
 globships=${sysconfdir}/sailor/ships
 
 : ${varbase:=/var}
-: ${prefix:=/usr/pkg}
 : ${sysconfdir:=${prefix}/etc}
 
 [ ! -d "${varrun}" ] && ${mkdir} ${varrun}
@@ -84,7 +86,10 @@ build()
 	done
 
 	# devices
-	${mkdir} ${shippath}/dev
+	for d in dev etc/rc.d
+	do
+		${mkdir} -p ${shippath}/${d}
+	done
 	mkdevs
 
 	# needed for pkg_install / pkgin to work
@@ -101,7 +106,7 @@ build()
 	
 	# raw pkg_install / pkgin installation
 	pkg_requires pkg_install
-	for p in pkg_install pkgin
+	for p in pkg_install pkgin mozilla-rootcerts-openssl
 	do
 		${pkg_tarup} -d ${shippath}/tmp ${p}
 		${tar} zxfp ${shippath}/tmp/${p}*tgz -C ${shippath}/${prefix}
@@ -109,7 +114,8 @@ build()
 	bin_requires ${prefix}/sbin/pkg_add
 	bin_requires ${prefix}/bin/pkgin
 	# install pkg{_install,in} the right way
-	chroot ${shippath} ${prefix}/sbin/pkg_add /tmp/pkg_install*
+	chroot ${shippath} ${prefix}/sbin/pkg_add \
+		/tmp/pkg_install* /tmp/mozilla-rootcerts*
 	
 	# minimal etc provisioning
 	${mkdir} ${shippath}/etc
@@ -157,7 +163,7 @@ build()
 	# mounts might be needed at build for software installation
 	mounts mount
 
-	if [ ! -z "${packages}" ]; then
+	if [ -n "${packages}" ]; then
 		PKG_RCD_SCRIPTS=yes ${pkgin} -y -c ${shippath} in ${packages}
 		${pkgin} -y clean
 	fi

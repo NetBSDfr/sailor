@@ -3,9 +3,9 @@
 # needed 3rd party programs
 for bin in pkg_info pkg_tarup pkgin rsync curl
 do
-	binpath=`which ${bin}`
+	binpath=$(command -v ${bin})
 	if [ -z "${binpath}" ]; then
-		echo "${bin} is required for sailor to work"
+		echo "${bin} is required for sailor to work (probably not in \$PATH)"
 		exit 1
 	fi
 	eval ${bin}=${binpath}
@@ -60,13 +60,13 @@ NetBSD)
 		/usr/bin/ldd -f'%p\n' ${1}
 	}
 	mkdevs() {
-		${cp} /dev/MAKEDEV ${shippath}/dev
-		cd ${shippath}/dev
-		sh MAKEDEV all
-		cd -
+		${cp} /dev/MAKEDEV ${shippath}/etc
+		chroot ${shippath} sh -c "cd /dev && /etc/MAKEDEV -M std"
 	}
 	mounts() {
 		mcmd=${1}
+		# mount / umounts ro and ro mountpoints declared in
+		# ship configuration file
 		for mtype in ro rw
 		do
 			eval mnt=\$"${mtype}_mounts"
@@ -75,13 +75,17 @@ NetBSD)
 			do
 				[ ! -d "${mp}" ] && continue
 				${mkdir} ${shippath}/${mp}
-				[ ${mcmd} = "mount" ] && \
+				[ "${mcmd}" = "mount" ] && \
 					${loopmount} -o ${mtype} \
 					${mp} ${shippath}/${mp}
-				[ ${mcmd} = "umount" ] && \
+				[ "${mcmd}" = "umount" ] && \
 					${umount} ${shippath}/${mp}
 			done
 		done
+		# umount devfs / tmpfs
+		[ "${mcmd}" = "umount" ] && \
+			${mount}|grep -q ${shippath}/dev && \
+			${umount} ${shippath}/dev
 	}
 	iflist() {
 		${ifconfig} -l
@@ -143,4 +147,5 @@ esac
 def_bins="${def_bins} ${useradd} ${groupadd} ${pkg_info} ${pkgin} \
 	/bin/sh /bin/test $(which nologin) /bin/echo /bin/ps /bin/sleep \
 	$(which sysctl) $(which logger) $(which kill) $(which printf) \
-	 /bin/sh ${ping}"
+	 /bin/sh ${ping} /sbin/mknod /sbin/mount_tmpfs /sbin/mount_mfs \
+	 /bin/cat /bin/ln /bin/chmod"
