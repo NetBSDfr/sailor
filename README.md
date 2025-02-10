@@ -231,10 +231,10 @@ Sailor icon by [Freeplk](https://www.flaticon.com/authors/freepik).
 
 [0]: https://en.wikipedia.org/wiki/Chroot
 [1]: http://pkgin.net
-[2]: http://saveosx.org/
+[2]: https://github.com/cmacrae/saveosx
 [3]: http://nginx.org/
 [4]: http://php.net/manual/en/install.fpm.php
-[5]: http://saveosx.org/download-and-install/
+[5]: https://github.com/cmacrae/saveosx#installation
 [6]: https://nodejs.org/en/
 [7]: http://pm2.keymetrics.io/
 [8]: https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-14-04
@@ -242,6 +242,6 @@ Sailor icon by [Freeplk](https://www.flaticon.com/authors/freepik).
 [10]: https://www.joyent.com/
 [11]: https://www.perkin.org.uk/
 [12]: https://pkgsrc.joyent.com/install-on-osx/
-[13]: http://saveosx.org/
+[13]: https://github.com/cmacrae/saveosx
 [14]: http://www.NetBSDfr.org/
 [15]: https://pkgsrc.joyent.com/install-on-linux/
