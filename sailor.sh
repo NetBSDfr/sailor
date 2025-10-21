@@ -23,7 +23,7 @@ param=${2}
 
 . ${include}/define.sh
 
-prefix=$(${pkg_info} -QLOCALBASE pkgin)
+prefix=$([ -n "$LOCALBASE" ] && echo $LOCALBASE || ${pkg_info} -QLOCALBASE pkgin)
 PATH=${PATH}:${prefix}/bin:${prefix}/sbin
 
 . ${include}/platform.sh
@@ -82,7 +82,7 @@ build()
 	# copy flat files from host
 	for file in ${def_files}
 	do
-		${pax} ${file} ${shippath}/
+		${pax} ${file} ${shippath}
 	done
 
 	# devices
@@ -102,11 +102,17 @@ build()
 	${mkdir} ${shippath}/tmp
 	chmod 1777 ${shippath}/tmp ${shippath}/var/tmp
 
-	${rsync} ${prefix}/etc/pkgin ${shippath}/${sysconfdir}/
-	
+	# synchronize optional directory
+	[ -n "$sync_dirs" ] && for d in $sync_dirs; do
+			${pax} ${d} ${shippath}
+		done
+
+	# setup TLS certificates, see https://wiki.netbsd.org/certctl-transition/
+	# assume /usr/share/certs and /usr/share/examples/certctl/certs.conf sync
+	chroot ${shippath} certctl rehash
 	# raw pkg_install / pkgin installation
 	pkg_requires pkg_install
-	for p in pkg_install pkgin mozilla-rootcerts-openssl
+	for p in pkg_install pkgin
 	do
 		${pkg_tarup} -d ${shippath}/tmp ${p}
 		${tar} zxfp ${shippath}/tmp/${p}*tgz -C ${shippath}/${prefix}
@@ -115,12 +121,14 @@ build()
 	bin_requires ${prefix}/bin/pkgin
 	# install pkg{_install,in} the right way
 	chroot ${shippath} ${prefix}/sbin/pkg_add \
-		/tmp/pkg_install* /tmp/mozilla-rootcerts*
+		/tmp/pkg_install*
 	
 	# minimal etc provisioning
-	${mkdir} ${shippath}/etc
-	${cp} /usr/share/zoneinfo/GMT ${shippath}/etc/localtime
-	${cp} /etc/resolv.conf ${shippath}/etc/
+	${mkdir} -p ${shippath}/etc
+	[ ! -f ${shippath}/etc/localtime ] && \
+		${cp} /usr/share/zoneinfo/GMT ${shippath}/etc/localtime
+	[ ! -f ${shippath}/etc/resolv.conf ] && \
+		${cp} /etc/resolv.conf ${shippath}/etc/
 	# custom DNS (mDNSresponder for OS X)
 	dns add
 	# custom /etc
