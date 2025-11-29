@@ -136,7 +136,8 @@ build()
 	# populate commons
 	for t in all ${OS}
 	do
-		[ -d ${common}/${t} ] && ${rsync} ${common}/${t}/ ${shippath}/
+		[ -d ${common}/${t} ] && ${rsync} --ignore-existing \
+			${common}/${t}/ ${shippath}/
 	done
 	# populate 3rd party
 	[ -d ships/${shipname} ] && ${rsync} ships/${shipname}/ ${shippath}/
