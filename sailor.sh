@@ -1,4 +1,4 @@
-#!/bin/sh
+#! /usr/bin/env sh
 
 include=include
 
@@ -74,11 +74,14 @@ build()
 		${mkdir} -p ${shippath} || \
 		exit 1
 
+	[ -n "${debug}" ] && [ "${debug}" = "yes" ] && shipbins="${shipbins} ${debug_bins}"
+
 	# copy binaries and dependencies from host
 	for bin in ${def_bins} ${shipbins}
 	do
 		bin_requires ${bin}
 	done
+
 	# copy flat files from host
 	for file in ${def_files}
 	do
