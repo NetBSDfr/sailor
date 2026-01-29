@@ -55,7 +55,7 @@ Darwin)
 	# request-schema.plist needed for dscl
 	def_files="/System/Library/OpenDirectory/request-schema.plist"
 	;;
-NetBSD)
+NetBSD|smolBSD)
 	p_ldd() {
 		/usr/bin/ldd -f'%p\n' ${1}
 	}
@@ -85,7 +85,7 @@ NetBSD)
 		# umount devfs / tmpfs
 		[ "${mcmd}" = "umount" ] && \
 			${mount}|grep -q ${shippath}/dev && \
-			${umount} ${shippath}/dev
+			${umount} ${shippath}/dev || true
 	}
 	iflist() {
 		${ifconfig} -l

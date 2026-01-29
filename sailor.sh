@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 include=include
 
 usage()
@@ -163,7 +165,6 @@ build()
 	${pkgin} -y -c ${shippath} in pkgin
 
 	${pkgin} -y -c ${shippath} update
-
 	for pkg in ${packages}
 	do
 		get_pkg_deps ${pkg}
