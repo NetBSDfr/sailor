@@ -125,35 +125,38 @@ build()
 	chroot ${shippath} ${prefix}/sbin/pkg_add \
 		/tmp/pkg_install*
 	
-	# minimal etc provisioning
-	${mkdir} -p ${shippath}/etc
-	[ ! -f ${shippath}/etc/localtime ] && \
-		${cp} /usr/share/zoneinfo/GMT ${shippath}/etc/localtime
-	[ ! -f ${shippath}/etc/resolv.conf ] && \
-		${cp} /etc/resolv.conf ${shippath}/etc/
-	# custom DNS (mDNSresponder for OS X)
-	dns add
-	# custom /etc
-	common="ships/common"
-	# populate commons
-	for t in all ${OS}
-	do
-		[ -d ${common}/${t} ] && ${rsync} --ignore-existing \
-			${common}/${t}/ ${shippath}/
-	done
-	# populate 3rd party
-	[ -d ships/${shipname} ] && ${rsync} ships/${shipname}/ ${shippath}/
+	# check for smolBSD build image
+	if [ ! -f "/BUILDIMG" ]; then
+		# minimal etc provisioning
+		${mkdir} -p ${shippath}/etc
+		[ ! -f ${shippath}/etc/localtime ] && \
+			${cp} /usr/share/zoneinfo/GMT ${shippath}/etc/localtime
+		[ ! -f ${shippath}/etc/resolv.conf ] && \
+			${cp} /etc/resolv.conf ${shippath}/etc/
+		# custom DNS (mDNSresponder for OS X)
+		dns add
+		# custom /etc
+		common="ships/common"
+		# populate commons
+		for t in all ${OS}
+		do
+			[ -d ${common}/${t} ] && ${rsync} --ignore-existing \
+				${common}/${t}/ ${shippath}/
+		done
+		# populate 3rd party
+		[ -d ships/${shipname} ] && ${rsync} ships/${shipname}/ ${shippath}/
 
-	# ${prefix} changes depending on the OS, configurations to be copied
-	# to ship's ${prefix} are located in ships/${shipname}/PREFIX and
-	# then copied to ${shippath}/PREFIX. The following will move them to
-	# the correct ${prefix}
-	[ -d ${shippath}/PREFIX ] && \
-		${rsync} ${shippath}/PREFIX/ ${shippath}/${prefix}/
-	# fix etc perms
-	${chown} -R root:wheel ${shippath}/etc
-	ship_master_passwd=${shippath}/etc/${master_passwd}
-	[ -f ${ship_master_passwd} ] && ${chmod} 600 ${ship_master_passwd}
+		# ${prefix} changes depending on the OS, configurations to be copied
+		# to ship's ${prefix} are located in ships/${shipname}/PREFIX and
+		# then copied to ${shippath}/PREFIX. The following will move them to
+		# the correct ${prefix}
+		[ -d ${shippath}/PREFIX ] && \
+			${rsync} ${shippath}/PREFIX/ ${shippath}/${prefix}/
+		# fix etc perms
+		${chown} -R root:wheel ${shippath}/etc
+		ship_master_passwd=${shippath}/etc/${master_passwd}
+		[ -f ${ship_master_passwd} ] && ${chmod} 600 ${ship_master_passwd}
+	fi
 
 	need_tools pkgin
 
