@@ -60,7 +60,7 @@ NetBSD|smolBSD)
 		/usr/bin/ldd -f'%p\n' ${1}
 	}
 	mkdevs() {
-		${cp} /dev/MAKEDEV ${shippath}/etc
+		${cp} /dev/MAKEDEV* ${shippath}/etc
 		chroot ${shippath} sh -c "cd /dev && /etc/MAKEDEV -M std"
 	}
 	mounts() {
